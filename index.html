@@ -5,6 +5,11 @@
   <meta name="viewport" content="width=device-width,initial-scale=1">
   <title>주식검색 뉴스레터</title>
   <link rel="stylesheet" href="./styles.css?v=20260721-net-liquidity">
+  <style>
+    .tga-indicator{grid-column:1/span 4}
+    @media(max-width:1100px){.tga-indicator{grid-column:span 2}}
+    @media(max-width:650px){.tga-indicator{grid-column:auto}}
+  </style>
 </head>
 <body>
   <main class="shell">
@@ -38,12 +43,6 @@
         <a class="risk-source-button" href="https://www.cnn.com/markets/fear-and-greed" target="_blank" rel="noreferrer">Fear &amp; Greed 열기</a>
         <p>Fear &amp; Greed Index</p>
         <small>주가 모멘텀, 변동성, 옵션, 안전자산 수요 등을 합친 시장 심리 지표</small>
-      </article>
-      <article class="risk-indicator mmf-indicator source" id="mmfIndicator">
-        <div class="risk-head"><span>하이일드 신용 스트레스</span><a href="https://fred.stlouisfed.org/series/BAMLH0A0HYM2" target="_blank" rel="noreferrer">FRED</a></div>
-        <div class="mmf-flow-value"><strong id="highYieldSpread">확인 중</strong><span id="highYieldAsOf">ICE BofA OAS 조회 중</span></div>
-        <p id="highYieldSignal">신용시장 위험선호 확인 중</p>
-        <small id="highYieldInterpretation">스프레드 축소는 위험선호, 확대는 신용 스트레스 상승을 시사합니다. 직접적인 유동성 지표는 아닙니다.</small>
       </article>
       <article class="risk-indicator tga-indicator source" id="tgaIndicator">
         <div class="risk-head"><span>미 재무부 일반계정(TGA)</span><a href="https://fiscaldata.treasury.gov/datasets/daily-treasury-statement/operating-cash-balance" target="_blank" rel="noreferrer">US Treasury</a></div>
@@ -117,6 +116,6 @@
   </main>
   <template id="newsTemplate"><article class="news-card"><div class="meta"><strong class="ticker"></strong><span class="source"></span><span class="time"></span></div><h3></h3><p class="translated"></p><p class="summary"></p><div class="footer"><div class="tags"></div><a target="_blank" rel="noreferrer">원문</a></div></article></template>
   <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
-  <script src="./app.js?v=20260901-high-yield"></script>
+  <script src="./app.js?v=20260901-remove-high-yield"></script>
 </body>
 </html>
