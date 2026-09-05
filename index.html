@@ -6,12 +6,20 @@
   <title>주식검색 뉴스레터</title>
   <link rel="stylesheet" href="./styles.css?v=20260905-bank-reserves">
   <style>
-    .tga-indicator{grid-column:1/span 4}
+    .tga-indicator{grid-column:1/span 4;grid-row:3}
     .liquidity-pairs{display:grid;grid-template-columns:1fr;gap:16px}
     .liquidity-pair{padding:12px;border:1px solid var(--line);border-radius:8px;background:#fff}
     .liquidity-pair>span{display:block;margin-bottom:8px;color:var(--muted);font-size:12px;font-weight:800}
-    @media(max-width:1100px){.tga-indicator{grid-column:span 2}}
-    @media(max-width:650px){.tga-indicator{grid-column:auto}.liquidity-pairs{grid-template-columns:1fr}}
+    .option-sentiment-indicator{grid-column:1/span 4;grid-row:2;min-height:auto}
+    .option-sentiment-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;margin-top:12px}
+    .option-sentiment-grid>div{padding:12px;border:1px solid var(--line);border-radius:8px;background:#f8fbf9}
+    .option-sentiment-grid span,.option-sentiment-grid small{display:block;color:var(--muted);font-size:12px;font-weight:800}
+    .option-sentiment-grid strong{display:block;margin:8px 0 5px;font-size:clamp(20px,2vw,30px)}
+    .option-sentiment-grid strong.positive{color:var(--green)}.option-sentiment-grid strong.negative{color:#b33a24}.option-sentiment-grid strong.caution{color:#a5641d}
+    .option-sentiment-note{margin:12px 0 0!important;font-size:13px!important;line-height:1.5}
+    @media(max-width:1100px){.tga-indicator{grid-column:span 2}.tga-indicator,.option-sentiment-indicator{grid-row:auto}}
+    @media(max-width:800px){.option-sentiment-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+    @media(max-width:650px){.tga-indicator,.option-sentiment-indicator{grid-column:auto}.liquidity-pairs,.option-sentiment-grid{grid-template-columns:1fr}}
   </style>
 </head>
 <body>
@@ -35,17 +43,21 @@
         <p>MOVE Index</p>
         <small>미국 국채 금리 변동성 기대치</small>
       </article>
-      <article class="risk-indicator" id="putCallIndicator">
-        <div class="risk-head"><span>옵션 센티먼트</span><a href="https://www.cboe.com/markets/us/options/market-statistics" target="_blank" rel="noreferrer">Cboe</a></div>
-        <a class="risk-source-button" href="https://www.cboe.com/markets/us/options/market-statistics" target="_blank" rel="noreferrer">Cboe 통계 열기</a>
-        <p>Put/Call Ratio</p>
-        <small>Cboe 페이지의 U.S. Options Market Volume Summary에서 Total, Equity, Index PCR을 확인합니다</small>
-      </article>
       <article class="risk-indicator" id="fearGreedIndicator">
         <div class="risk-head"><span>투자심리</span><a href="https://www.cnn.com/markets/fear-and-greed" target="_blank" rel="noreferrer">CNN</a></div>
         <a class="risk-source-button" href="https://www.cnn.com/markets/fear-and-greed" target="_blank" rel="noreferrer">Fear &amp; Greed 열기</a>
         <p>Fear &amp; Greed Index</p>
         <small>주가 모멘텀, 변동성, 옵션, 안전자산 수요 등을 합친 시장 심리 지표</small>
+      </article>
+      <article class="risk-indicator option-sentiment-indicator source" id="putCallIndicator">
+        <div class="risk-head"><span>옵션 센티먼트</span><a href="https://www.cboe.com/us/options/market_statistics/daily/" target="_blank" rel="noreferrer">Cboe</a></div>
+        <div class="option-sentiment-grid">
+          <div><span>Equity P/C</span><strong id="equityPcValue">불러오는 중</strong><small id="equityPcReading">개별주식 심리</small></div>
+          <div><span>Index P/C</span><strong id="indexPcValue">불러오는 중</strong><small id="indexPcReading">지수 헤지 수요</small></div>
+          <div><span>Index P/C vs 20일</span><strong id="indexPcDeviation">-</strong><small id="indexPcAverage">기준선 계산 중</small></div>
+          <div><span>종합 상태</span><strong id="optionSentimentState">분석 중</strong><small id="optionSentimentAsOf">Cboe 공식 데이터</small></div>
+        </div>
+        <p class="option-sentiment-note" id="optionSentimentNote">Equity와 Index P/C를 교차 분석해 위험선호와 지수 헤지 수요를 구분합니다.</p>
       </article>
       <article class="risk-indicator tga-indicator source" id="tgaIndicator">
         <div class="risk-head"><span>TGA · ON RRP · 은행 지급준비금</span><div><a href="https://fiscaldata.treasury.gov/datasets/daily-treasury-statement/operating-cash-balance" target="_blank" rel="noreferrer">TGA</a> <a href="https://www.newyorkfed.org/markets/desk-operations/reverse-repo" target="_blank" rel="noreferrer">NY Fed</a> <a href="https://fred.stlouisfed.org/series/WRESBAL" target="_blank" rel="noreferrer">FRED</a></div></div>
@@ -122,6 +134,6 @@
   </main>
   <template id="newsTemplate"><article class="news-card"><div class="meta"><strong class="ticker"></strong><span class="source"></span><span class="time"></span></div><h3></h3><p class="translated"></p><p class="summary"></p><div class="footer"><div class="tags"></div><a target="_blank" rel="noreferrer">원문</a></div></article></template>
   <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
-  <script src="./app.js?v=20260905-bank-reserves"></script>
+  <script src="./app.js?v=20260905-option-sentiment"></script>
 </body>
 </html>
