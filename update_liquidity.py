@@ -69,13 +69,15 @@ def last_value(rows, target_date):
 start_date = (date.today() - timedelta(days=230)).isoformat()
 walcl = fred_series("WALCL", start_date)
 rrp = fred_series("RRPONTSYD", start_date)
+reserves = fred_series("WRESBAL", start_date)
 tga = tga_series(start_date)
 
 combined = []
 for row in walcl:
     tga_value = last_value(tga, row["date"])
     rrp_value = last_value(rrp, row["date"])
-    if tga_value is None or rrp_value is None:
+    reserves_value = last_value(reserves, row["date"])
+    if tga_value is None or rrp_value is None or reserves_value is None:
         continue
     walcl_billions = row["value"] / 1000
     tga_billions = tga_value / 1000
@@ -86,6 +88,7 @@ for row in walcl:
             "walcl": round(walcl_billions, 3),
             "tga": round(tga_billions, 3),
             "rrp": round(rrp_value, 3),
+            "reserves": round(reserves_value, 3),
         }
     )
 

@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
   <title>주식검색 뉴스레터</title>
-  <link rel="stylesheet" href="./styles.css?v=20260721-net-liquidity">
+  <link rel="stylesheet" href="./styles.css?v=20260905-bank-reserves">
   <style>
     .tga-indicator{grid-column:1/span 4}
     .liquidity-pairs{display:grid;grid-template-columns:1fr;gap:16px}
@@ -48,12 +48,13 @@
         <small>주가 모멘텀, 변동성, 옵션, 안전자산 수요 등을 합친 시장 심리 지표</small>
       </article>
       <article class="risk-indicator tga-indicator source" id="tgaIndicator">
-        <div class="risk-head"><span>TGA · ON RRP 유동성</span><div><a href="https://fiscaldata.treasury.gov/datasets/daily-treasury-statement/operating-cash-balance" target="_blank" rel="noreferrer">TGA</a> <a href="https://www.newyorkfed.org/markets/desk-operations/reverse-repo" target="_blank" rel="noreferrer">NY Fed</a></div></div>
+        <div class="risk-head"><span>TGA · ON RRP · 은행 지급준비금</span><div><a href="https://fiscaldata.treasury.gov/datasets/daily-treasury-statement/operating-cash-balance" target="_blank" rel="noreferrer">TGA</a> <a href="https://www.newyorkfed.org/markets/desk-operations/reverse-repo" target="_blank" rel="noreferrer">NY Fed</a> <a href="https://fred.stlouisfed.org/series/WRESBAL" target="_blank" rel="noreferrer">FRED</a></div></div>
         <div class="liquidity-pairs">
           <div class="liquidity-pair"><span>미 재무부 일반계정(TGA)</span><div class="tga-summary"><div><strong id="tgaBalance">불러오는 중</strong><span id="tgaAsOf">일별 종가 · 단위 $B</span></div><p id="tgaChange">20거래일 변화 계산 중</p></div><div id="tgaChart" class="tga-chart" aria-label="최근 TGA 잔고 그래프"></div></div>
           <div class="liquidity-pair"><span>익일물 역레포(ON RRP)</span><div class="tga-summary"><div><strong id="rrpBalance">불러오는 중</strong><span id="rrpAsOf">일별 결과 · 단위 $B</span></div><p id="rrpChange">20거래일 변화 계산 중</p></div><div id="rrpChart" class="tga-chart" aria-label="최근 ON RRP 잔고 그래프"></div></div>
+          <div class="liquidity-pair"><span>미국 은행 지급준비금</span><div class="tga-summary"><div><strong id="reserveBalance">불러오는 중</strong><span id="reserveAsOf">주간 · 단위 $B</span></div><p id="reserveChange">4주 변화 계산 중</p></div><div id="reserveChart" class="tga-chart" aria-label="최근 미국 은행 지급준비금 그래프"></div></div>
         </div>
-        <small id="tgaInterpretation">두 잔액의 감소는 금융시스템 유동성 공급 방향, 증가는 흡수 방향으로 해석할 수 있습니다.</small>
+        <small id="tgaInterpretation">TGA와 ON RRP 감소는 유동성 공급 방향입니다. 지급준비금 증가는 은행권 유동성 확대 방향으로 볼 수 있습니다.</small>
       </article>
     </section>
 
@@ -121,6 +122,6 @@
   </main>
   <template id="newsTemplate"><article class="news-card"><div class="meta"><strong class="ticker"></strong><span class="source"></span><span class="time"></span></div><h3></h3><p class="translated"></p><p class="summary"></p><div class="footer"><div class="tags"></div><a target="_blank" rel="noreferrer">원문</a></div></article></template>
   <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
-  <script src="./app.js?v=20260901-split-liquidity-charts"></script>
+  <script src="./app.js?v=20260905-bank-reserves"></script>
 </body>
 </html>
