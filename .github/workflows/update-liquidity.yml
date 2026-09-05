@@ -18,12 +18,10 @@ jobs:
           python-version: "3.12"
       - name: Download official liquidity data
         run: python update_liquidity.py
-      - name: Download Cboe option sentiment data
-        run: python update_options_sentiment.py
       - name: Commit updated data
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add liquidity.json options_sentiment.json
+          git add liquidity.json
           git diff --cached --quiet || git commit -m "Update liquidity data"
           git push
