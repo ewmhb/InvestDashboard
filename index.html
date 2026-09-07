@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
   <title>주식검색 뉴스레터</title>
-  <link rel="stylesheet" href="./styles.css?v=20260907-liquidity-score">
+  <link rel="stylesheet" href="./styles.css?v=20260907-news-first">
   <style>
     .tga-indicator{grid-column:1/span 4;grid-row:3}
     .liquidity-pairs{display:grid;grid-template-columns:1fr;gap:16px}
@@ -28,7 +28,7 @@
     <section class="hero">
       <div>
         <h1>주식검색 뉴스레터</h1>
-        <p class="lead">뉴스 수집, 번역, AI 요약, 종목별 분석, 자동 업데이트, 이메일·메신저 알림을 한 화면에서 관리합니다.</p>
+        <p class="lead">관심 종목의 새 소식과 뉴스 신호를 먼저 확인하고, 시장 지표를 함께 살펴보세요.</p>
       </div>
       <div class="orbital" aria-hidden="true"><span></span><span></span><span></span></div>
     </section>
@@ -45,7 +45,7 @@
           <div class="move-thermometer" aria-label="MOVE 시장 스트레스 온도계"><div class="move-scale"><div class="move-level" id="moveLevel"></div><span>안정</span><span>주의</span><span>높음</span><span>스트레스</span></div></div>
           <div class="move-trend"><div class="move-stats"><span id="movePercentile">1년 백분위 계산 중</span><span id="moveAverage">20일 평균 계산 중</span></div><div id="moveChart" class="move-chart" aria-label="MOVE 최근 3개월 추세 그래프"></div></div>
         </div>
-        <small id="moveExplanation" class="move-explanation">금리 수준과 변동성은 별개입니다. 이 지표가 낮아도 국채 금리 자체가 높으면 성장주와 장기채의 할인율 부담은 지속될 수 있습니다.</small>
+        <details class="method-note"><summary>공식 MOVE와 산출 방식의 차이</summary><p>FRED 2·5·10·30년 금리의 일간 변화(bp)에 대해 최근 21개 변화값의 표준편차를 연율화(√252)하고, 네 만기의 평균에 1.1255를 곱해 55~180 범위로 제한합니다. 옵션 가격 기반 공식 ICE MOVE와 다른 자체 계산값입니다. 연결 실패 시 저장된 시계열은 산출 방식 미확인으로 별도 표시합니다. 구간 판정은 참고용입니다.</p></details><small id="moveExplanation" class="move-explanation">금리 수준과 변동성은 별개입니다. 이 지표가 낮아도 국채 금리 자체가 높으면 성장주와 장기채의 할인율 부담은 지속될 수 있습니다.</small>
       </article>
       <article class="risk-indicator fear-greed-indicator source" id="fearGreedIndicator">
         <div class="risk-head"><span>투자심리</span><a href="https://www.cnn.com/markets/fear-and-greed" target="_blank" rel="noreferrer">CNN</a></div>
@@ -68,14 +68,14 @@
         <div class="risk-head"><span>TGA · ON RRP · 은행 지급준비금</span><div><a href="https://fiscaldata.treasury.gov/datasets/daily-treasury-statement/operating-cash-balance" target="_blank" rel="noreferrer">TGA</a> <a href="https://www.newyorkfed.org/markets/desk-operations/reverse-repo" target="_blank" rel="noreferrer">NY Fed</a> <a href="https://fred.stlouisfed.org/series/WRESBAL" target="_blank" rel="noreferrer">FRED</a></div></div>
         <div class="liquidity-scoreboard">
           <div class="liquidity-score"><strong id="liquidityScore">--</strong><span>/ 100</span><b id="liquidityScoreLabel">점수 계산 중</b></div>
-          <div class="liquidity-score-details"><div><span>확정 주간 신호</span><strong id="liquidityWeeklySignal">공통 기준일 정렬 중</strong><small id="liquidityWeeklyAsOf">수요일 기준</small></div><div><span>일일 추정 지급준비금</span><strong id="liquidityReserveNowcast">계산 중</strong><small id="liquidityNowcastAsOf">TGA·ON RRP 반영</small></div><div><span>데이터 신뢰도</span><strong id="liquidityConfidence">--%</strong><small id="liquidityLag">발표 시차 계산 중</small></div></div>
+          <div class="liquidity-score-details"><div><span>확정 주간 신호</span><strong id="liquidityWeeklySignal">공통 기준일 정렬 중</strong><small id="liquidityWeeklyAsOf">수요일 기준</small></div><div><span>일일 추정 지급준비금</span><strong id="liquidityReserveNowcast">계산 중</strong><small id="liquidityNowcastAsOf">TGA·ON RRP 반영</small></div><div><span>데이터 최신성 점수</span><strong id="liquidityConfidence">--%</strong><small id="liquidityLag">발표 시차 계산 중</small></div></div>
         </div>
         <div class="liquidity-pairs">
           <div class="liquidity-pair"><span>미 재무부 일반계정(TGA)</span><div class="tga-summary"><div><strong id="tgaBalance">불러오는 중</strong><span id="tgaAsOf">일별 종가 · 단위 $B</span></div><p id="tgaChange">20거래일 변화 계산 중</p></div><div id="tgaChart" class="tga-chart" aria-label="최근 TGA 잔고 그래프"></div></div>
           <div class="liquidity-pair"><span>익일물 역레포(ON RRP)</span><div class="tga-summary"><div><strong id="rrpBalance">불러오는 중</strong><span id="rrpAsOf">일별 결과 · 단위 $B</span></div><p id="rrpChange">20거래일 변화 계산 중</p></div><div id="rrpChart" class="tga-chart" aria-label="최근 ON RRP 잔고 그래프"></div></div>
           <div class="liquidity-pair"><span>미국 은행 지급준비금</span><div class="tga-summary"><div><strong id="reserveBalance">불러오는 중</strong><span id="reserveAsOf">주간 · 단위 $B</span></div><p id="reserveChange">4주 변화 계산 중</p></div><div id="reserveChart" class="tga-chart" aria-label="최근 미국 은행 지급준비금 그래프"></div></div>
         </div>
-        <small id="tgaInterpretation">유동성 점수는 같은 수요일 기준의 순유동성 변화와 지급준비금을 사용합니다. 일일 TGA·ON RRP는 별도의 추정치로 표시해 시점 혼합을 줄입니다.</small>
+        <small id="tgaInterpretation">최신성 점수는 95점에서 기준일 2일 초과분에 하루 5점씩 차감하며 최저 45점입니다. 정확도 확률이 아닙니다. 유동성 점수는 같은 수요일 기준의 순유동성 변화와 지급준비금을 사용합니다. 일일 TGA·ON RRP는 별도의 추정치로 표시해 시점 혼합을 줄입니다.</small>
       </article>
     </section>
 
@@ -87,10 +87,10 @@
     </section>
 
     <section class="metrics">
-      <article><span>수집 뉴스</span><strong id="metricNews">0</strong></article>
-      <article><span>호재 신호</span><strong id="metricPositive">0</strong></article>
-      <article><span>리스크 신호</span><strong id="metricRisk">0</strong></article>
-      <article><span>관심도</span><strong id="metricHeat">0</strong></article>
+      <article><span>30일 사건 수</span><strong id="metricNews">0</strong></article>
+      <article><span>긍정 뉴스 신호</span><strong id="metricPositive">0</strong></article>
+      <article><span>기사 내 리스크 감지</span><strong id="metricRisk">0</strong></article>
+      <article><span>뉴스 신호 점수</span><strong id="metricHeat">0</strong></article>
       <article class="quote-card"><div class="metric-head"><span>선택 종목 현재가</span></div><div id="quoteWidget" class="tradingview-widget-container"></div></article>
       <article class="valuation-card"><div class="metric-head valuation-head"><span>밸류에이션</span><small id="valuationAsOf">참고 데이터</small></div><div id="valuationGrid" class="valuation-grid"></div></article>
     </section>
@@ -106,12 +106,12 @@
       <div class="tradingview-chart-card"><div id="chartWidget" class="tradingview-widget-container"></div></div>
     </section>
 
-    <section class="market-calendar" aria-label="시장 일정 캘린더">
+    <section class="market-calendar" aria-label="주간 체크리스트 · 일정 원문">
       <div class="section-head">
-        <div><h2>시장 일정 캘린더</h2><p>미국장 기준 주요 거시 이벤트와 관심 종목 체크포인트입니다.</p></div>
+        <div><h2>주간 체크리스트 · 일정 원문</h2><p>아래 항목은 반복 점검 목록입니다. 확정된 발표 일정이 아니며, 날짜·한국시간·휴장 여부는 공식 일정에서 확인하세요.</p></div>
         <a href="https://www.nasdaq.com/market-activity/earnings" target="_blank" rel="noreferrer">실적 캘린더 열기</a>
       </div>
-      <div class="calendar-grid">
+      <div class="calendar-links"><a href="https://www.bls.gov/schedule/" target="_blank" rel="noreferrer">미국 고용·물가 일정</a> <a href="https://www.federalreserve.gov/monetarypolicy/fomccalendars.htm" target="_blank" rel="noreferrer">FOMC 일정</a> <a href="https://www.nyse.com/markets/hours-calendars" target="_blank" rel="noreferrer">미국장 휴장·거래시간</a></div><div class="calendar-grid">
         <article class="calendar-day today"><time datetime="2026-06-30"><span>6월 30일</span><strong>화</strong></time><div><b>장중 변동성 점검</b><p>분기 말 리밸런싱, 금리, VIX 흐름 확인</p></div></article>
         <article class="calendar-day"><time datetime="2026-07-01"><span>7월 1일</span><strong>수</strong></time><div><b>제조업 지표</b><p>ISM 제조업, 신규주문, 고용 세부항목</p></div></article>
         <article class="calendar-day"><time datetime="2026-07-02"><span>7월 2일</span><strong>목</strong></time><div><b>고용 선행 지표</b><p>ADP 고용, 주간 실업수당 청구건수</p></div></article>
@@ -124,7 +124,7 @@
         <button class="active" data-view="news" type="button">뉴스</button><button data-view="official" type="button">공식 소식</button><button data-view="flow" type="button">수급·공시</button><button data-view="analysis" type="button">종목 분석</button><button data-view="alerts" type="button">알림</button><button data-view="settings" type="button">설정</button>
       </nav>
       <section id="news" class="view active">
-        <div class="section-head"><div><h2>뉴스 수집 · 번역 · AI 요약</h2><p id="refreshState">초기화 중</p></div><div class="filters"><button class="active" data-filter="all" type="button">전체</button><button data-filter="bullish" type="button">호재</button><button data-filter="risk" type="button">리스크</button></div></div>
+        <div class="section-head"><div><h2>뉴스 · 번역 · 근거 확인</h2><p id="refreshState">초기화 중</p></div><div class="filters"><button class="active" data-filter="all" type="button">전체</button><button data-filter="bullish" type="button">호재</button><button data-filter="risk" type="button">리스크</button></div></div>
         <div id="newsList" class="news-list"></div>
       </section>
       <section id="official" class="view">
@@ -136,13 +136,14 @@
         <article id="dilutionSummary" class="flow-summary"></article>
         <div id="flowCardList" class="flow-card-list"></div>
       </section>
-      <section id="analysis" class="view"><div class="section-head"><div><h2 id="analysisTitle">IONQ 종합 점수</h2><p id="analysisSummary">뉴스 흐름을 계약, 기술, 재무, 리스크로 나눠 분석합니다.</p></div><div class="score" id="scoreRing">72</div></div><div id="factorList" class="factor-list"></div></section>
+      <section id="analysis" class="view"><div class="section-head"><div><h2 id="analysisTitle">IONQ 뉴스 신호 점수</h2><p id="analysisSummary">뉴스 흐름을 계약, 기술, 재무, 리스크로 나눠 분석합니다.</p></div><div class="score" id="scoreRing">—</div></div><div id="factorList" class="factor-list"></div></section>
       <section id="alerts" class="view"><div class="section-head"><div><h2>이메일 · 메신저 알림</h2><p>중요 뉴스가 임계값을 넘으면 이메일 초안 또는 메신저 웹훅 payload를 만듭니다.</p></div></div><div class="form-grid"><label><span>받는 이메일</span><input id="emailTarget" type="email" placeholder="you@example.com"></label><label><span>메신저 웹훅</span><input id="webhookTarget" type="url" placeholder="Slack/Discord/Teams webhook"></label><label><span>알림 임계값</span><input id="alertThreshold" type="range" min="40" max="95" value="70"></label></div><div class="actions"><button id="makeEmail" type="button">이메일 초안</button><button id="copyWebhook" type="button">웹훅 복사</button></div><pre id="alertPreview"></pre></section>
-      <section id="settings" class="view"><div class="section-head"><div><h2>수집 소스와 AI 설정</h2><p>기본은 RSS와 내장 요약 엔진입니다. 실제 AI API 엔드포인트를 연결할 수 있게 설계했습니다.</p></div></div><div class="form-grid"><label class="wide"><span>RSS 소스</span><textarea id="rssSources" rows="7"></textarea></label><label><span>AI API 엔드포인트</span><input id="aiEndpoint" type="url" placeholder="https://api.example.com/summarize"></label><label><span>금융 데이터 API 키</span><input id="valuationApiKey" type="password" placeholder="Financial Modeling Prep API key"></label><label><span>Alpha Vantage API 키</span><input id="alphaVantageApiKey" type="password" placeholder="Alpha Vantage API key"></label><label><span>Finnhub API 키</span><input id="finnhubApiKey" type="password" placeholder="Finnhub API key"></label><label><span>다음 업데이트</span><input id="nextRefresh" readonly value="15:00"></label></div></section>
+      <section id="settings" class="view"><div class="section-head"><div><h2>수집 소스와 AI 설정</h2><p>RSS 제목을 번역하고 키워드로 분류합니다. AI 본문 요약은 연결되어 있지 않습니다.</p></div></div><div class="form-grid"><label class="wide"><span>RSS 소스</span><textarea id="rssSources" rows="7"></textarea></label><label><span>AI API 엔드포인트 (현재 미연결)</span><input disabled id="aiEndpoint" type="url" placeholder="https://api.example.com/summarize"></label><label><span>금융 데이터 API 키</span><input id="valuationApiKey" type="password" placeholder="Financial Modeling Prep API key"></label><label><span>Alpha Vantage API 키</span><input id="alphaVantageApiKey" type="password" placeholder="Alpha Vantage API key"></label><label><span>Finnhub API 키</span><input id="finnhubApiKey" type="password" placeholder="Finnhub API key"></label><label><span>다음 업데이트</span><input id="nextRefresh" readonly value="15:00"></label></div></section>
     </section>
   </main>
   <template id="newsTemplate"><article class="news-card"><div class="meta"><strong class="ticker"></strong><span class="source"></span><span class="time"></span></div><h3></h3><p class="translated"></p><p class="summary"></p><div class="footer"><div class="tags"></div><a target="_blank" rel="noreferrer">원문</a></div></article></template>
   <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
-  <script src="./app.js?v=20260907-liquidity-score"></script>
+  <script src="./dashboard.js?v=20260907-news-first"></script>
+  <script src="./app.js?v=20260907-news-first"></script>
 </body>
 </html>
