@@ -39,13 +39,13 @@
 
     <section class="risk-indicators" aria-label="시장 리스크 지표">
       <article class="risk-indicator move-indicator source" id="moveIndicator">
-        <div class="risk-head"><span>채권 변동성</span><div><a href="https://www.ice.com/market-data/indices" target="_blank" rel="noreferrer">ICE 원본</a> <a href="https://fred.stlouisfed.org/series/DGS10" target="_blank" rel="noreferrer">FRED 데이터</a></div></div>
+        <div class="risk-head"><span>미국 국채 금리 변동성</span><div><a href="https://www.ice.com/market-data/indices" target="_blank" rel="noreferrer">ICE 원본</a> <a href="https://fred.stlouisfed.org/series/DGS10" target="_blank" rel="noreferrer">FRED 데이터</a></div></div>
         <div class="move-dashboard">
-          <div class="move-reading"><span>MOVE Proxy</span><strong id="moveValue">불러오는 중</strong><b id="moveState">시장 스트레스 분석 중</b><small id="moveAsOf">미 국채 금리 변동성</small></div>
+          <div class="move-reading"><span>미 국채 변동성 대체지표</span><strong id="moveValue">불러오는 중</strong><b id="moveState">변동성 분석 중</b><small id="moveAsOf">금리 수준과 별도 측정</small></div>
           <div class="move-thermometer" aria-label="MOVE 시장 스트레스 온도계"><div class="move-scale"><div class="move-level" id="moveLevel"></div><span>안정</span><span>주의</span><span>높음</span><span>스트레스</span></div></div>
           <div class="move-trend"><div class="move-stats"><span id="movePercentile">1년 백분위 계산 중</span><span id="moveAverage">20일 평균 계산 중</span></div><div id="moveChart" class="move-chart" aria-label="MOVE 최근 3개월 추세 그래프"></div></div>
         </div>
-        <small id="moveExplanation" class="move-explanation">공개 FRED 금리로 계산한 MOVE 유사 지표입니다. 상승하면 채권시장의 불확실성과 성장주 할인율 부담이 커질 수 있습니다.</small>
+        <small id="moveExplanation" class="move-explanation">금리 수준과 변동성은 별개입니다. 이 지표가 낮아도 국채 금리 자체가 높으면 성장주와 장기채의 할인율 부담은 지속될 수 있습니다.</small>
       </article>
       <article class="risk-indicator fear-greed-indicator source" id="fearGreedIndicator">
         <div class="risk-head"><span>투자심리</span><a href="https://www.cnn.com/markets/fear-and-greed" target="_blank" rel="noreferrer">CNN</a></div>
