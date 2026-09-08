@@ -1,4 +1,14 @@
-// Provider-defined subindustry peers. No manually selected comparison tickers.
+// Theme membership is maintained from company business descriptions; winners are ranked from live quotes.
+const PEER_THEMES = [
+  {name:'양자컴퓨팅',reviewed:'2026-09-08',members:{
+    IONQ:'https://www.ionq.com/',RGTI:'https://www.rigetti.com/about-rigetti-computing',
+    QBTS:'https://www.dwavequantum.com/company/about-d-wave/',QUBT:'https://quantumcomputinginc.com/technology'}},
+  {name:'우주·위성',reviewed:'2026-09-08',members:{
+    RKLB:'https://rocketlabcorp.com/about/about-us/',RDW:'https://rdw.com/',ASTS:'https://ast-science.com/',
+    LUNR:'https://www.intuitivemachines.com/about-us',PL:'https://www.planet.com/company/',
+    BKSY:'https://blacksky.com/',SPIR:'https://spire.com/'}}
+];
+function peerThemeFor(ticker) { return PEER_THEMES.find(theme=>Object.hasOwn(theme.members,ticker)) || null; }
 const sectorPeerState = { request: 0, cache: new Map(), inflight: new Map(), active: null };
 const PEER_RANK_LABELS = { price: '1주당 현재가', marketCap: '시가총액', change: '당일 등락률' };
 function peerNumber(value) { return typeof value === 'number' && Number.isFinite(value) ? value : null; }
@@ -28,7 +38,8 @@ async function loadSectorPeerData(ticker, key) {
   if (cached && Date.now() - cached.at < 300000) return cached;
   if (sectorPeerState.inflight.has(cacheKey)) return sectorPeerState.inflight.get(cacheKey);
   const work = (async () => {
-    const [profile, symbols] = await Promise.all([
+    const theme = peerThemeFor(ticker);
+    const [profile, symbols] = theme ? [{ticker,finnhubIndustry:theme.name},Object.keys(theme.members)] : await Promise.all([
       peerRequest('stock/profile2', {symbol:ticker}, key),
       peerRequest('stock/peers', {symbol:ticker, grouping:'subIndustry'}, key)
     ]);
@@ -42,16 +53,16 @@ async function loadSectorPeerData(ticker, key) {
           peerRequest('stock/profile2', {symbol}, key), peerRequest('quote', {symbol}, key)
         ]);
         if (!company?.ticker || !company.finnhubIndustry) throw new Error('업종 미확보');
-        if (company.finnhubIndustry !== profile.finnhubIndustry || company.country !== profile.country) return null;
+        if (!theme && (company.finnhubIndustry !== profile.finnhubIndustry || company.country !== profile.country)) return null;
         const price=peerNumber(quote.c), previous=peerNumber(quote.pc);
         if (!(price>0) || !(quote.t>0)) throw new Error('시세 미확보');
-        return {ticker:symbol,name:company.name||symbol,industry:company.finnhubIndustry,currency:company.currency,price,
+        return {ticker:symbol,name:company.name||symbol,industry:theme?theme.name:company.finnhubIndustry,currency:company.currency,price,
           marketCap:peerNumber(company.marketCapitalization) === null ? null : company.marketCapitalization*1000000,
           change:peerNumber(quote.dp) ?? (previous>0?(price/previous-1)*100:null),timestamp:quote.t};
       }));
       results.forEach((result,index)=>{if(result.status==='fulfilled'){if(result.value)rows.push(result.value);}else failures.push(candidates[i+index]);});
     }
-    const result={at:Date.now(),industry:profile.finnhubIndustry,rows,failures,candidates};
+    const result={at:Date.now(),industry:profile.finnhubIndustry,theme,rows,failures,candidates};
     sectorPeerState.cache.set(cacheKey,result);return result;
   })();
   sectorPeerState.inflight.set(cacheKey,work);
@@ -62,6 +73,8 @@ async function renderSectorPeers() {
   if(!body||!status)return;
   const request=++sectorPeerState.request,ticker=state.ticker,key=normalizeApiKey(els.finnhubApiKey?.value);
   body.replaceChildren();
+  const universe=document.getElementById('peerUniverse');
+  if(universe){universe.replaceChildren();const theme=peerThemeFor(ticker);universe.append(radarNode('summary','비교 후보와 분류 근거'));if(theme){universe.append(radarNode('p',theme.name+' · '+theme.reviewed+' 사업 설명 확인. 등록된 종목 안에서 순위를 계산하며 전 세계 전체 섹터 순위는 아닙니다.'));Object.entries(theme.members).forEach(([symbol,url])=>universe.append(officialLink(symbol+(symbol===ticker?' (조회 종목)':''),url)));}else universe.append(radarNode('p','Finnhub의 세부 업종 동종업체 목록을 사용합니다. 제공처 업종은 투자 테마보다 넓을 수 있습니다.'));}
   if(!key){status.textContent='자동 비교를 사용하려면 설정의 Finnhub API 키를 연결해 주세요. 임의 종목은 표시하지 않습니다.';return;}
   status.textContent=ticker+'의 동종업체와 최신 시세를 조회하고 있습니다…';
   try{
@@ -70,7 +83,7 @@ async function renderSectorPeers() {
     sectorPeerState.active=data;
     const rows=rankSectorPeers(data.rows,ticker,criterion);
     const incomplete=data.failures.length>0||data.rows.some(row=>row.currency==='USD'&&peerNumber(row[criterion])===null);
-    status.textContent=ticker+' · '+data.industry+' · Finnhub 세부 업종 동종업체 '+data.candidates.length+'개 중 '+PEER_RANK_LABELS[criterion]+' 내림차순 · '+(incomplete?'일부 데이터 미확보: 전체 후보 순위는 확정할 수 없습니다.':'')+' 조회 '+new Date(data.at).toLocaleString('ko-KR',{timeZone:'Asia/Seoul'})+' KST';
+    status.textContent=ticker+' · '+data.industry+' · '+(data.theme?'등록된 동일 테마 후보 ':'Finnhub 세부 업종 후보 ')+data.candidates.length+'개 중 '+PEER_RANK_LABELS[criterion]+' 내림차순 · '+(incomplete?'일부 데이터 미확보: 전체 후보 순위는 확정할 수 없습니다.':'')+' 시세 조회 '+new Date(data.at).toLocaleString('ko-KR',{timeZone:'Asia/Seoul'})+' KST';
     if(!rows.length){status.textContent+=' · 비교 가능한 USD 종목이 없습니다.';return;}
     rows.forEach((row,index)=>{
       const tr=radarNode('tr'),tickerCell=radarNode('td'),button=radarNode('button',row.ticker);button.type='button';
