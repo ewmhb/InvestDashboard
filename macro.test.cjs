@@ -1,0 +1,16 @@
+const fs=require('node:fs'),vm=require('node:vm'),assert=require('node:assert/strict');
+const ctx=vm.createContext({console,Date,Map,Set});vm.runInContext(fs.readFileSync('macro.js','utf8'),ctx);
+const run=code=>vm.runInContext(code,ctx);
+assert.equal(run('macroStats([{date:"2026-01-01",value:4},{date:"2026-01-02",value:4.1}],100).day').toFixed(2),'10.00');
+assert.equal(run('macroClean([{date:"2026-01-01",value:null},{date:"2026-01-02",value:0}]).length'),1);
+assert.equal(run('macroStats([]).day'),null);
+assert.equal(run('macroStats([{date:"2026-01-01",value:2}]).week'),null);
+assert.equal(run('macroJoin([{date:"2026-01-01",value:4},{date:"2026-01-02",value:5}],[{date:"2026-01-02",value:3}],(a,b)=>(a-b)*100)[0].value'),200);
+assert.equal(run('macroVolatility(Array.from({length:20},(_,i)=>({date:String(i),value:i}))).length'),0);
+assert.equal(run('macroVolatility(Array.from({length:21},(_,i)=>({date:String(i),value:i}))).at(-1).value'),0);
+const actual=JSON.parse(fs.readFileSync('macro_data.json','utf8'));ctx.payload=actual;
+const summary=run('macroSummary(macroBuild(payload))');assert(summary.date);
+const series=run('macroBuild(payload)');
+for(const id of ['DGS2','DGS10','DFII10','T10YIE','REALIZED','VIXCLS'])assert(series[id].some(r=>r.date===summary.date));
+console.log('Passed: bp conversion, missing values, matched-date spreads, 20-change volatility window and common-date summary.');
+console.log('Actual common date:',summary.date,summary.text);

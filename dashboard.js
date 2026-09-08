@@ -90,6 +90,7 @@ function rememberRadar() {
   writeRadar(key,record);
 }
 function setupDashboard() {
+  document.getElementById('moveIndicator')?.remove();
   renderNews=renderRadarNews;renderMetrics=renderRadarMetrics;renderAnalysis=renderRadarAnalysis;
   summarize=function(a,score){if(a.sample)return '샘플 자료는 신호 점수에 포함하지 않습니다.';const labels={contract:'계약·고객',tech:'기술',finance:'재무',risk:'리스크'};const tags=getTags(a.title).map(x=>labels[x]);return '분류: '+(tags.join(' · ')||'일반 기업 소식')+'\n감지 신호: '+(score.sentiment>0?'긍정':score.sentiment<0?'부정':'방향 미확정')+'\n확인할 점: '+(tags.includes('계약·고객')?'계약 금액·기간·매출 반영 시점':tags.includes('재무')?'실적 대상 기간·전년 비교·일회성 항목':'발표 주체·구체적 성과·사업 반영 시점')+'을 원문에서 확인하세요. 본문 분석은 수행하지 않았습니다.';};
   const oldRender=render;render=function(){oldRender();rememberRadar();};
@@ -97,7 +98,7 @@ function setupDashboard() {
   const briefing=radarNode('section',undefined,'radar-panel');briefing.id='visitChanges';briefing.setAttribute('aria-live','polite');briefing.append(radarNode('h2','오늘의 종목 브리핑'),radarNode('p','뉴스를 수집하고 있습니다.'));
   const detail=radarNode('details',undefined,'radar-panel macro-detail');detail.append(radarNode('summary','거시지표 상세 · 출처와 기준일'),risk);
   const compact=radarNode('section',undefined,'radar-compact');compact.setAttribute('aria-label','시장 상황 요약');
-  [['국채 변동성','moveValue','moveAsOf'],['투자심리','fearGreedValue','fearGreedAsOf'],['Equity P/C','equityPcValue','optionSentimentAsOf'],['유동성 점수','liquidityScore','liquidityWeeklyAsOf']].forEach(([label,id,dateId])=>{const card=radarNode('article');const value=radarNode('strong','—'),date=radarNode('small','확인 중');card.append(radarNode('span',label),value,date);compact.append(card);const source=risk.querySelector("#"+id);if(source){const sync=()=>{value.textContent=source.textContent;date.textContent=document.getElementById(dateId)?.textContent||'상세에서 기준일 확인';};new MutationObserver(sync).observe(source.closest("article"),{childList:true,subtree:true,characterData:true});sync();}});
+  [['투자심리','fearGreedValue','fearGreedAsOf'],['Equity P/C','equityPcValue','optionSentimentAsOf'],['유동성 점수','liquidityScore','liquidityWeeklyAsOf']].forEach(([label,id,dateId])=>{const card=radarNode('article');const value=radarNode('strong','—'),date=radarNode('small','확인 중');card.append(radarNode('span',label),value,date);compact.append(card);const source=risk.querySelector("#"+id);if(source){const sync=()=>{value.textContent=source.textContent;date.textContent=document.getElementById(dateId)?.textContent||'상세에서 기준일 확인';};new MutationObserver(sync).observe(source.closest("article"),{childList:true,subtree:true,characterData:true});sync();}});
   shell.replaceChildren(hero,tape,compact,detail,control,briefing,metrics,workspace,chart,calendar);
   renderMarketCalendar=function(){const grid=document.querySelector('.calendar-grid');grid.replaceChildren();[['시장 방향','금리·달러·VIX 변화'],['실적·공시','선택 종목의 실적 발표와 신규 공시'],['유동성','국채 입찰·은행 지급준비금'],['거래시간','미국장 휴장·단축 거래']].forEach(([title,body])=>{const card=radarNode('article',undefined,'calendar-day');card.append(radarNode('strong',title),radarNode('p',body));grid.append(card);});};
 }
