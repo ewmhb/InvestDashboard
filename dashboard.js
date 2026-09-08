@@ -87,20 +87,17 @@ function rememberRadar() {
   box.append(radarNode('p',previous?'지난 조회 '+new Date(previous.at).toLocaleString('ko-KR')+' 이후 발행된 새 기사 '+fresh.length+'건.':'첫 조회입니다. 다음 방문부터 새 기사를 비교합니다. 저장은 이 브라우저에만 적용됩니다.'));
   (previous?fresh:items).slice(0,3).forEach(a=>box.append(officialLink(correctFinancialTranslation(a.title,a.translated)||a.title,/^https?:\/\//i.test(a.link)?a.link:'#')));
   const record={at:new Date().toISOString(),keys:items.map(articleKey),count:recentEvents().length,score:newsSignal(recentEvents()),risk:recentEvents().filter(x=>x.risk>0).length};
-  writeRadar(key,record);renderWatchlist();
+  writeRadar(key,record);
 }
-function renderWatchlist() { return renderSectorPeers(); }
 function setupDashboard() {
   renderNews=renderRadarNews;renderMetrics=renderRadarMetrics;renderAnalysis=renderRadarAnalysis;
   summarize=function(a,score){if(a.sample)return '샘플 자료는 신호 점수에 포함하지 않습니다.';const labels={contract:'계약·고객',tech:'기술',finance:'재무',risk:'리스크'};const tags=getTags(a.title).map(x=>labels[x]);return '분류: '+(tags.join(' · ')||'일반 기업 소식')+'\n감지 신호: '+(score.sentiment>0?'긍정':score.sentiment<0?'부정':'방향 미확정')+'\n확인할 점: '+(tags.includes('계약·고객')?'계약 금액·기간·매출 반영 시점':tags.includes('재무')?'실적 대상 기간·전년 비교·일회성 항목':'발표 주체·구체적 성과·사업 반영 시점')+'을 원문에서 확인하세요. 본문 분석은 수행하지 않았습니다.';};
   const oldRender=render;render=function(){oldRender();rememberRadar();};
   const shell=document.querySelector('.shell'),hero=document.querySelector('.hero'),control=document.querySelector('.control-bar'),metrics=document.querySelector('.metrics'),workspace=document.querySelector('.workspace'),chart=document.querySelector('.stock-chart-card'),risk=document.querySelector('.risk-indicators'),calendar=document.querySelector('.market-calendar'),tape=document.querySelector('.market-strip');
   const briefing=radarNode('section',undefined,'radar-panel');briefing.id='visitChanges';briefing.setAttribute('aria-live','polite');briefing.append(radarNode('h2','오늘의 종목 브리핑'),radarNode('p','뉴스를 수집하고 있습니다.'));
-  const watch=radarNode('details',undefined,'radar-panel');watch.open=true;watch.innerHTML='<summary>동일 섹터 상위 2개 종목</summary><div class="peer-controls"><label><span>선정 기준</span><select id="peerRank"><option value="marketCap">시가총액 큰 순</option><option value="price">1주당 현재가 높은 순</option><option value="change">당일 등락률 높은 순</option></select></label><button type="button" id="peerRetry">비교 새로고침</button></div><p id="peerStatus" aria-live="polite">동종업체 확인 중</p><p class="peer-note">조회한 종목 제외 · USD 거래 종목 · 양자·우주는 사업 분야별 등록 후보 안에서 비교하며, 그 외 종목은 제공처의 세부 업종을 사용합니다. 주가가 높다는 것은 기업 규모나 투자 매력도가 높다는 뜻은 아닙니다.</p><details id="peerUniverse"></details><div class="table-scroll"><table><thead><tr><th>순위</th><th>종목</th><th>현재가 (USD)</th><th>시가총액</th><th>등락률</th><th>시세 기준 시각</th></tr></thead><tbody id="watchRows"></tbody></table></div>';
   const detail=radarNode('details',undefined,'radar-panel macro-detail');detail.append(radarNode('summary','거시지표 상세 · 출처와 기준일'),risk);
   const compact=radarNode('section',undefined,'radar-compact');compact.setAttribute('aria-label','시장 상황 요약');
   [['국채 변동성','moveValue','moveAsOf'],['투자심리','fearGreedValue','fearGreedAsOf'],['Equity P/C','equityPcValue','optionSentimentAsOf'],['유동성 점수','liquidityScore','liquidityWeeklyAsOf']].forEach(([label,id,dateId])=>{const card=radarNode('article');const value=radarNode('strong','—'),date=radarNode('small','확인 중');card.append(radarNode('span',label),value,date);compact.append(card);const source=risk.querySelector("#"+id);if(source){const sync=()=>{value.textContent=source.textContent;date.textContent=document.getElementById(dateId)?.textContent||'상세에서 기준일 확인';};new MutationObserver(sync).observe(source.closest("article"),{childList:true,subtree:true,characterData:true});sync();}});
-  shell.replaceChildren(hero,tape,compact,detail,control,briefing,watch,metrics,workspace,chart,calendar);
-  // Peer data starts after saved provider settings have loaded.
+  shell.replaceChildren(hero,tape,compact,detail,control,briefing,metrics,workspace,chart,calendar);
   renderMarketCalendar=function(){const grid=document.querySelector('.calendar-grid');grid.replaceChildren();[['시장 방향','금리·달러·VIX 변화'],['실적·공시','선택 종목의 실적 발표와 신규 공시'],['유동성','국채 입찰·은행 지급준비금'],['거래시간','미국장 휴장·단축 거래']].forEach(([title,body])=>{const card=radarNode('article',undefined,'calendar-day');card.append(radarNode('strong',title),radarNode('p',body));grid.append(card);});};
 }
