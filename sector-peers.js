@@ -75,15 +75,19 @@ async function renderSectorPeers() {
   body.replaceChildren();
   const universe=document.getElementById('peerUniverse');
   if(universe){universe.replaceChildren();const theme=peerThemeFor(ticker);universe.append(radarNode('summary','비교 후보와 분류 근거'));if(theme){universe.append(radarNode('p',theme.name+' · '+theme.reviewed+' 사업 설명 확인. 등록된 종목 안에서 순위를 계산하며 전 세계 전체 섹터 순위는 아닙니다.'));Object.entries(theme.members).forEach(([symbol,url])=>universe.append(officialLink(symbol+(symbol===ticker?' (조회 종목)':''),url)));}else universe.append(radarNode('p','Finnhub의 세부 업종 동종업체 목록을 사용합니다. 제공처 업종은 투자 테마보다 넓을 수 있습니다.'));}
-  if(!key){status.textContent='자동 비교를 사용하려면 설정의 Finnhub API 키를 연결해 주세요. 임의 종목은 표시하지 않습니다.';return;}
-  status.textContent=ticker+'의 동종업체와 최신 시세를 조회하고 있습니다…';
+  status.textContent=ticker+'의 공통 비교 자료를 확인하고 있습니다…';
   try{
-    const data=await loadSectorPeerData(ticker,key);
+    let data;
+    try { data=await loadSharedSectorPeers(ticker); }
+    catch(error) {
+      if(!key) throw error;
+      data=await loadSectorPeerData(ticker,key);
+    }
     if(request!==sectorPeerState.request||ticker!==state.ticker)return;
     sectorPeerState.active=data;
     const rows=rankSectorPeers(data.rows,ticker,criterion);
     const incomplete=data.failures.length>0||data.rows.some(row=>row.currency==='USD'&&peerNumber(row[criterion])===null);
-    status.textContent=ticker+' · '+data.industry+' · '+(data.theme?'등록된 동일 테마 후보 ':'Finnhub 세부 업종 후보 ')+data.candidates.length+'개 중 '+PEER_RANK_LABELS[criterion]+' 내림차순 · '+(incomplete?'일부 데이터 미확보: 전체 후보 순위는 확정할 수 없습니다.':'')+' 시세 조회 '+new Date(data.at).toLocaleString('ko-KR',{timeZone:'Asia/Seoul'})+' KST';
+    status.textContent=ticker+' · '+data.industry+' · '+(data.theme?'등록된 동일 테마 후보 ':'Finnhub 세부 업종 후보 ')+data.candidates.length+'개 중 '+PEER_RANK_LABELS[criterion]+' 내림차순 · '+(incomplete?'일부 데이터 미확보: 전체 후보 순위는 확정할 수 없습니다.':'')+(data.shared?' 모든 기기 공통 자료 · 매시간 갱신 예정 · ':' 개인 연결 자료 · ')+'시세 조회 '+new Date(data.at).toLocaleString('ko-KR',{timeZone:'Asia/Seoul'})+' KST'+(Date.now()-data.at>3*60*60*1000?' · 갱신 지연: 이전 수집 자료입니다.':'')+(data.refreshFailed?' · 최근 수집 실패: 이전 자료를 표시합니다.':'');
     if(!rows.length){status.textContent+=' · 비교 가능한 USD 종목이 없습니다.';return;}
     rows.forEach((row,index)=>{
       const tr=radarNode('tr'),tickerCell=radarNode('td'),button=radarNode('button',row.ticker);button.type='button';
@@ -97,6 +101,14 @@ async function renderSectorPeers() {
     });
     if(rows.length<2)status.textContent+=' · 조건을 충족한 종목이 '+rows.length+'개뿐입니다.';
   }catch(error){if(request!==sectorPeerState.request||ticker!==state.ticker)return;status.textContent='자동 비교를 불러오지 못했습니다. '+(error instanceof TypeError?'금융 데이터 제공처 연결이 제한되었습니다. 잠시 후 다시 조회하세요.':error instanceof Error?error.message:'연결을 확인하세요.');}
+}
+async function loadSharedSectorPeers(ticker) {
+  // Raw data is updated independently of GitHub Pages builds. No browser credentials are sent.
+  const response=await fetchWithTimeout('https://raw.githubusercontent.com/ewmhb/InvestDashboard/main/sector-peers-data.json?v='+Math.floor(Date.now()/60000),{cache:'no-store',credentials:'omit'},10000);
+  if(!response.ok) throw new Error('공통 비교 자료를 준비 중입니다. 서버 연결 설정과 첫 수집이 완료되면 모든 기기에 표시됩니다.');
+  const payload=await response.json(),data=payload?.tickers?.[ticker];
+  if(payload?.version!==1||!data||!Array.isArray(data.rows)||!Array.isArray(data.candidates)||!Array.isArray(data.failures)||!Number.isFinite(data.at)) throw new Error('이 티커는 아직 공통 수집 목록에 없습니다. 관리자가 수집 목록에 추가해야 합니다.');
+  return {...data,shared:true};
 }
 function setupSectorPeers() {
   renderWatchlist=renderSectorPeers;
