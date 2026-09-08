@@ -69,7 +69,7 @@ async function loadSectorPeerData(ticker, key) {
   try{return await work;}finally{sectorPeerState.inflight.delete(cacheKey);}
 }
 async function renderSectorPeers() {
-  const body=document.getElementById('watchRows'),status=document.getElementById('peerStatus'),criterion=document.getElementById('peerRank')?.value||'price';
+  const body=document.getElementById('watchRows'),status=document.getElementById('peerStatus'),criterion=document.getElementById('peerRank')?.value||'marketCap';
   if(!body||!status)return;
   const request=++sectorPeerState.request,ticker=state.ticker,key=normalizeApiKey(els.finnhubApiKey?.value);
   body.replaceChildren();
@@ -101,8 +101,8 @@ async function renderSectorPeers() {
 function setupSectorPeers() {
   renderWatchlist=renderSectorPeers;
   const rank=document.getElementById('peerRank');
-  const saved=readRadar('radarPeerRank','price');rank.value=Object.hasOwn(PEER_RANK_LABELS,saved)?saved:'price';
-  rank.addEventListener('change',()=>{writeRadar('radarPeerRank',rank.value);renderSectorPeers();});
+  const saved=readRadar('radarPeerRankV2','marketCap');rank.value=Object.hasOwn(PEER_RANK_LABELS,saved)?saved:'marketCap';
+  rank.addEventListener('change',()=>{writeRadar('radarPeerRankV2',rank.value);renderSectorPeers();});
   document.getElementById('peerRetry').onclick=()=>{sectorPeerState.cache.clear();renderSectorPeers();};
   const oldApply=applyTicker;applyTicker=function(){oldApply();renderSectorPeers();};
   els.finnhubApiKey.addEventListener('change',()=>{sectorPeerState.cache.clear();renderSectorPeers();});
