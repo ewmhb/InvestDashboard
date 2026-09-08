@@ -2,7 +2,7 @@ const fs=require('node:fs'),vm=require('node:vm'),assert=require('node:assert/st
 const calls=[];
 const profiles={ROOT:{ticker:'ROOT',country:'US',currency:'USD',finnhubIndustry:'Quantum'},A:{ticker:'A',country:'US',currency:'USD',finnhubIndustry:'Quantum',marketCapitalization:50},B:{ticker:'B',country:'US',currency:'USD',finnhubIndustry:'Quantum',marketCapitalization:500},SPACE:{ticker:'SPACE',country:'US',currency:'USD',finnhubIndustry:'Space',marketCapitalization:900}};
 const context=vm.createContext({console,URL,Date,Set,Map,Intl,fetchWithTimeout:async(url,options)=>{
-  calls.push({url,options});assert.equal(options.headers['X-Finnhub-Token'],'test-key');assert.ok(!url.includes('test-key'));assert.equal(new URL(url).origin,'https://finnhub.io');
+  calls.push({url,options});assert.equal(new URL(url).searchParams.get('token'),'test-key');assert.equal(options.referrerPolicy,'no-referrer');assert.equal(new URL(url).origin,'https://finnhub.io');
   const u=new URL(url),symbol=u.searchParams.get('symbol');let data;
   if(u.pathname.endsWith('/peers')){assert.equal(u.searchParams.get('grouping'),'subIndustry');data=['ROOT','A','B','SPACE','A'];}
   else if(u.pathname.endsWith('/profile2'))data=profiles[symbol];

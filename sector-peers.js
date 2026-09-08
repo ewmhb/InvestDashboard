@@ -15,7 +15,8 @@ async function peerRequest(path, params, key) {
   const url = new URL('https://finnhub.io/api/v1/' + path);
   Object.entries(params).forEach(([name,value]) => url.searchParams.set(name,value));
   // Keys go only to Finnhub, never through the public CORS proxies used for RSS.
-  const response = await fetchWithTimeout(url.href, { headers: {'X-Finnhub-Token': key} }, 10000);
+  url.searchParams.set('token', key);
+  const response = await fetchWithTimeout(url.href, {referrerPolicy:'no-referrer'}, 10000);
   if (!response.ok) throw new Error(response.status === 429 ? '조회 한도에 도달했습니다. 잠시 후 다시 조회하세요.' : '동종업체 데이터 연결을 확인하세요 (HTTP ' + response.status + ').');
   const data = await response.json();
   if (data?.error) throw new Error('동종업체 데이터 이용 권한을 확인하세요.');
@@ -82,7 +83,7 @@ async function renderSectorPeers() {
       body.append(tr);
     });
     if(rows.length<2)status.textContent+=' · 조건을 충족한 종목이 '+rows.length+'개뿐입니다.';
-  }catch(error){if(request!==sectorPeerState.request||ticker!==state.ticker)return;status.textContent='자동 비교를 불러오지 못했습니다. '+(error instanceof Error?error.message:'연결을 확인하세요.');}
+  }catch(error){if(request!==sectorPeerState.request||ticker!==state.ticker)return;status.textContent='자동 비교를 불러오지 못했습니다. '+(error instanceof TypeError?'금융 데이터 제공처 연결이 제한되었습니다. 잠시 후 다시 조회하세요.':error instanceof Error?error.message:'연결을 확인하세요.');}
 }
 function setupSectorPeers() {
   renderWatchlist=renderSectorPeers;
