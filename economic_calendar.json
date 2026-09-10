@@ -1,0 +1,477 @@
+{
+  "sources": {
+    "BLS": {
+      "checkedAt": "2026-09-10",
+      "failed": true,
+      "attemptedAt": "2026-09-10T10:33:58.193180+00:00"
+    },
+    "FED": {
+      "checkedAt": "2026-09-10T10:33:58.193180+00:00",
+      "failed": false
+    }
+  },
+  "events": [
+    {
+      "title": "FOMC 금리 결정",
+      "at": "2021-01-27T14:00:00-05:00",
+      "source": "https://www.federalreserve.gov/monetarypolicy/fomccalendars.htm",
+      "provider": "FED",
+      "importance": "높음"
+    },
+    {
+      "title": "FOMC 금리 결정 · 경제전망",
+      "at": "2021-03-17T14:00:00-04:00",
+      "source": "https://www.federalreserve.gov/monetarypolicy/fomccalendars.htm",
+      "provider": "FED",
+      "importance": "높음"
+    },
+    {
+      "title": "FOMC 금리 결정",
+      "at": "2021-04-28T14:00:00-04:00",
+      "source": "https://www.federalreserve.gov/monetarypolicy/fomccalendars.htm",
+      "provider": "FED",
+      "importance": "높음"
+    },
+    {
+      "title": "FOMC 금리 결정 · 경제전망",
+      "at": "2021-06-16T14:00:00-04:00",
+      "source": "https://www.federalreserve.gov/monetarypolicy/fomccalendars.htm",
+      "provider": "FED",
+      "importance": "높음"
+    },
+    {
+      "title": "FOMC 금리 결정",
+      "at": "2021-07-28T14:00:00-04:00",
+      "source": "https://www.federalreserve.gov/monetarypolicy/fomccalendars.htm",
+      "provider": "FED",
+      "importance": "높음"
+    },
+    {
+      "title": "FOMC 금리 결정 · 경제전망",
+      "at": "2021-09-22T14:00:00-04:00",
+      "source": "https://www.federalreserve.gov/monetarypolicy/fomccalendars.htm",
+      "provider": "FED",
+      "importance": "높음"
+    },
+    {
+      "title": "FOMC 금리 결정",
+      "at": "2021-11-03T14:00:00-04:00",
+      "source": "https://www.federalreserve.gov/monetarypolicy/fomccalendars.htm",
+      "provider": "FED",
+      "importance": "높음"
+    },
+    {
+      "title": "FOMC 금리 결정 · 경제전망",
+      "at": "2021-12-15T14:00:00-05:00",
+      "source": "https://www.federalreserve.gov/monetarypolicy/fomccalendars.htm",
+      "provider": "FED",
+      "importance": "높음"
+    },
+    {
+      "title": "FOMC 금리 결정",
+      "at": "2022-01-26T14:00:00-05:00",
+      "source": "https://www.federalreserve.gov/monetarypolicy/fomccalendars.htm",
+      "provider": "FED",
+      "importance": "높음"
+    },
+    {
+      "title": "FOMC 금리 결정 · 경제전망",
+      "at": "2022-03-16T14:00:00-04:00",
+      "source": "https://www.federalreserve.gov/monetarypolicy/fomccalendars.htm",
+      "provider": "FED",
+      "importance": "높음"
+    },
+    {
+      "title": "FOMC 금리 결정",
+      "at": "2022-05-04T14:00:00-04:00",
+      "source": "https://www.federalreserve.gov/monetarypolicy/fomccalendars.htm",
+      "provider": "FED",
+      "importance": "높음"
+    },
+    {
+      "title": "FOMC 금리 결정 · 경제전망",
+      "at": "2022-06-15T14:00:00-04:00",
+      "source": "https://www.federalreserve.gov/monetarypolicy/fomccalendars.htm",
+      "provider": "FED",
+      "importance": "높음"
+    },
+    {
+      "title": "FOMC 금리 결정",
+      "at": "2022-07-27T14:00:00-04:00",
+      "source": "https://www.federalreserve.gov/monetarypolicy/fomccalendars.htm",
+      "provider": "FED",
+      "importance": "높음"
+    },
+    {
+      "title": "FOMC 금리 결정 · 경제전망",
+      "at": "2022-09-21T14:00:00-04:00",
+      "source": "https://www.federalreserve.gov/monetarypolicy/fomccalendars.htm",
+      "provider": "FED",
+      "importance": "높음"
+    },
+    {
+      "title": "FOMC 금리 결정",
+      "at": "2022-11-02T14:00:00-04:00",
+      "source": "https://www.federalreserve.gov/monetarypolicy/fomccalendars.htm",
+      "provider": "FED",
+      "importance": "높음"
+    },
+    {
+      "title": "FOMC 금리 결정 · 경제전망",
+      "at": "2022-12-14T14:00:00-05:00",
+      "source": "https://www.federalreserve.gov/monetarypolicy/fomccalendars.htm",
+      "provider": "FED",
+      "importance": "높음"
+    },
+    {
+      "title": "FOMC 금리 결정 · 경제전망",
+      "at": "2023-03-22T14:00:00-04:00",
+      "source": "https://www.federalreserve.gov/monetarypolicy/fomccalendars.htm",
+      "provider": "FED",
+      "importance": "높음"
+    },
+    {
+      "title": "FOMC 금리 결정",
+      "at": "2023-05-03T14:00:00-04:00",
+      "source": "https://www.federalreserve.gov/monetarypolicy/fomccalendars.htm",
+      "provider": "FED",
+      "importance": "높음"
+    },
+    {
+      "title": "FOMC 금리 결정 · 경제전망",
+      "at": "2023-06-14T14:00:00-04:00",
+      "source": "https://www.federalreserve.gov/monetarypolicy/fomccalendars.htm",
+      "provider": "FED",
+      "importance": "높음"
+    },
+    {
+      "title": "FOMC 금리 결정",
+      "at": "2023-07-26T14:00:00-04:00",
+      "source": "https://www.federalreserve.gov/monetarypolicy/fomccalendars.htm",
+      "provider": "FED",
+      "importance": "높음"
+    },
+    {
+      "title": "FOMC 금리 결정 · 경제전망",
+      "at": "2023-09-20T14:00:00-04:00",
+      "source": "https://www.federalreserve.gov/monetarypolicy/fomccalendars.htm",
+      "provider": "FED",
+      "importance": "높음"
+    },
+    {
+      "title": "FOMC 금리 결정 · 경제전망",
+      "at": "2023-12-13T14:00:00-05:00",
+      "source": "https://www.federalreserve.gov/monetarypolicy/fomccalendars.htm",
+      "provider": "FED",
+      "importance": "높음"
+    },
+    {
+      "title": "FOMC 금리 결정",
+      "at": "2024-01-31T14:00:00-05:00",
+      "source": "https://www.federalreserve.gov/monetarypolicy/fomccalendars.htm",
+      "provider": "FED",
+      "importance": "높음"
+    },
+    {
+      "title": "FOMC 금리 결정 · 경제전망",
+      "at": "2024-03-20T14:00:00-04:00",
+      "source": "https://www.federalreserve.gov/monetarypolicy/fomccalendars.htm",
+      "provider": "FED",
+      "importance": "높음"
+    },
+    {
+      "title": "FOMC 금리 결정",
+      "at": "2024-05-01T14:00:00-04:00",
+      "source": "https://www.federalreserve.gov/monetarypolicy/fomccalendars.htm",
+      "provider": "FED",
+      "importance": "높음"
+    },
+    {
+      "title": "FOMC 금리 결정 · 경제전망",
+      "at": "2024-06-12T14:00:00-04:00",
+      "source": "https://www.federalreserve.gov/monetarypolicy/fomccalendars.htm",
+      "provider": "FED",
+      "importance": "높음"
+    },
+    {
+      "title": "FOMC 금리 결정",
+      "at": "2024-07-31T14:00:00-04:00",
+      "source": "https://www.federalreserve.gov/monetarypolicy/fomccalendars.htm",
+      "provider": "FED",
+      "importance": "높음"
+    },
+    {
+      "title": "FOMC 금리 결정 · 경제전망",
+      "at": "2024-09-18T14:00:00-04:00",
+      "source": "https://www.federalreserve.gov/monetarypolicy/fomccalendars.htm",
+      "provider": "FED",
+      "importance": "높음"
+    },
+    {
+      "title": "FOMC 금리 결정",
+      "at": "2024-11-07T14:00:00-05:00",
+      "source": "https://www.federalreserve.gov/monetarypolicy/fomccalendars.htm",
+      "provider": "FED",
+      "importance": "높음"
+    },
+    {
+      "title": "FOMC 금리 결정 · 경제전망",
+      "at": "2024-12-18T14:00:00-05:00",
+      "source": "https://www.federalreserve.gov/monetarypolicy/fomccalendars.htm",
+      "provider": "FED",
+      "importance": "높음"
+    },
+    {
+      "title": "FOMC 금리 결정",
+      "at": "2025-01-29T14:00:00-05:00",
+      "source": "https://www.federalreserve.gov/monetarypolicy/fomccalendars.htm",
+      "provider": "FED",
+      "importance": "높음"
+    },
+    {
+      "title": "FOMC 금리 결정 · 경제전망",
+      "at": "2025-03-19T14:00:00-04:00",
+      "source": "https://www.federalreserve.gov/monetarypolicy/fomccalendars.htm",
+      "provider": "FED",
+      "importance": "높음"
+    },
+    {
+      "title": "FOMC 금리 결정",
+      "at": "2025-05-07T14:00:00-04:00",
+      "source": "https://www.federalreserve.gov/monetarypolicy/fomccalendars.htm",
+      "provider": "FED",
+      "importance": "높음"
+    },
+    {
+      "title": "FOMC 금리 결정 · 경제전망",
+      "at": "2025-06-18T14:00:00-04:00",
+      "source": "https://www.federalreserve.gov/monetarypolicy/fomccalendars.htm",
+      "provider": "FED",
+      "importance": "높음"
+    },
+    {
+      "title": "FOMC 금리 결정",
+      "at": "2025-07-30T14:00:00-04:00",
+      "source": "https://www.federalreserve.gov/monetarypolicy/fomccalendars.htm",
+      "provider": "FED",
+      "importance": "높음"
+    },
+    {
+      "title": "FOMC 금리 결정",
+      "at": "2025-08-22T14:00:00-04:00",
+      "source": "https://www.federalreserve.gov/monetarypolicy/fomccalendars.htm",
+      "provider": "FED",
+      "importance": "높음"
+    },
+    {
+      "title": "FOMC 금리 결정 · 경제전망",
+      "at": "2025-09-17T14:00:00-04:00",
+      "source": "https://www.federalreserve.gov/monetarypolicy/fomccalendars.htm",
+      "provider": "FED",
+      "importance": "높음"
+    },
+    {
+      "title": "FOMC 금리 결정",
+      "at": "2025-10-29T14:00:00-04:00",
+      "source": "https://www.federalreserve.gov/monetarypolicy/fomccalendars.htm",
+      "provider": "FED",
+      "importance": "높음"
+    },
+    {
+      "title": "FOMC 금리 결정 · 경제전망",
+      "at": "2025-12-10T14:00:00-05:00",
+      "source": "https://www.federalreserve.gov/monetarypolicy/fomccalendars.htm",
+      "provider": "FED",
+      "importance": "높음"
+    },
+    {
+      "title": "FOMC 금리 결정",
+      "at": "2026-01-28T14:00:00-05:00",
+      "source": "https://www.federalreserve.gov/monetarypolicy/fomccalendars.htm",
+      "provider": "FED",
+      "importance": "높음"
+    },
+    {
+      "title": "FOMC 금리 결정 · 경제전망",
+      "at": "2026-03-18T14:00:00-04:00",
+      "source": "https://www.federalreserve.gov/monetarypolicy/fomccalendars.htm",
+      "provider": "FED",
+      "importance": "높음"
+    },
+    {
+      "title": "FOMC 금리 결정",
+      "at": "2026-04-29T14:00:00-04:00",
+      "source": "https://www.federalreserve.gov/monetarypolicy/fomccalendars.htm",
+      "provider": "FED",
+      "importance": "높음"
+    },
+    {
+      "title": "FOMC 금리 결정 · 경제전망",
+      "at": "2026-06-17T14:00:00-04:00",
+      "source": "https://www.federalreserve.gov/monetarypolicy/fomccalendars.htm",
+      "provider": "FED",
+      "importance": "높음"
+    },
+    {
+      "title": "FOMC 금리 결정",
+      "at": "2026-07-29T14:00:00-04:00",
+      "source": "https://www.federalreserve.gov/monetarypolicy/fomccalendars.htm",
+      "provider": "FED",
+      "importance": "높음"
+    },
+    {
+      "title": "PPI 생산자물가",
+      "at": "2026-09-10T08:30:00-04:00",
+      "provider": "BLS",
+      "source": "https://www.bls.gov/schedule/news_release/ppi.htm",
+      "importance": "높음"
+    },
+    {
+      "title": "CPI 소비자물가",
+      "at": "2026-09-11T08:30:00-04:00",
+      "provider": "BLS",
+      "source": "https://www.bls.gov/schedule/news_release/cpi.htm",
+      "importance": "높음"
+    },
+    {
+      "title": "FOMC 금리 결정 · 경제전망",
+      "at": "2026-09-16T14:00:00-04:00",
+      "source": "https://www.federalreserve.gov/monetarypolicy/fomccalendars.htm",
+      "provider": "FED",
+      "importance": "높음"
+    },
+    {
+      "title": "고용보고서",
+      "at": "2026-10-02T08:30:00-04:00",
+      "provider": "BLS",
+      "source": "https://www.bls.gov/schedule/news_release/empsit.htm",
+      "importance": "높음"
+    },
+    {
+      "title": "CPI 소비자물가",
+      "at": "2026-10-14T08:30:00-04:00",
+      "provider": "BLS",
+      "source": "https://www.bls.gov/schedule/news_release/cpi.htm",
+      "importance": "높음"
+    },
+    {
+      "title": "PPI 생산자물가",
+      "at": "2026-10-15T08:30:00-04:00",
+      "provider": "BLS",
+      "source": "https://www.bls.gov/schedule/news_release/ppi.htm",
+      "importance": "높음"
+    },
+    {
+      "title": "FOMC 금리 결정",
+      "at": "2026-10-28T14:00:00-04:00",
+      "source": "https://www.federalreserve.gov/monetarypolicy/fomccalendars.htm",
+      "provider": "FED",
+      "importance": "높음"
+    },
+    {
+      "title": "고용보고서",
+      "at": "2026-11-06T08:30:00-05:00",
+      "provider": "BLS",
+      "source": "https://www.bls.gov/schedule/news_release/empsit.htm",
+      "importance": "높음"
+    },
+    {
+      "title": "CPI 소비자물가",
+      "at": "2026-11-10T08:30:00-05:00",
+      "provider": "BLS",
+      "source": "https://www.bls.gov/schedule/news_release/cpi.htm",
+      "importance": "높음"
+    },
+    {
+      "title": "PPI 생산자물가",
+      "at": "2026-11-13T08:30:00-05:00",
+      "provider": "BLS",
+      "source": "https://www.bls.gov/schedule/news_release/ppi.htm",
+      "importance": "높음"
+    },
+    {
+      "title": "고용보고서",
+      "at": "2026-12-04T08:30:00-05:00",
+      "provider": "BLS",
+      "source": "https://www.bls.gov/schedule/news_release/empsit.htm",
+      "importance": "높음"
+    },
+    {
+      "title": "FOMC 금리 결정 · 경제전망",
+      "at": "2026-12-09T14:00:00-05:00",
+      "source": "https://www.federalreserve.gov/monetarypolicy/fomccalendars.htm",
+      "provider": "FED",
+      "importance": "높음"
+    },
+    {
+      "title": "CPI 소비자물가",
+      "at": "2026-12-10T08:30:00-05:00",
+      "provider": "BLS",
+      "source": "https://www.bls.gov/schedule/news_release/cpi.htm",
+      "importance": "높음"
+    },
+    {
+      "title": "PPI 생산자물가",
+      "at": "2026-12-15T08:30:00-05:00",
+      "provider": "BLS",
+      "source": "https://www.bls.gov/schedule/news_release/ppi.htm",
+      "importance": "높음"
+    },
+    {
+      "title": "FOMC 금리 결정",
+      "at": "2027-01-27T14:00:00-05:00",
+      "source": "https://www.federalreserve.gov/monetarypolicy/fomccalendars.htm",
+      "provider": "FED",
+      "importance": "높음"
+    },
+    {
+      "title": "FOMC 금리 결정 · 경제전망",
+      "at": "2027-03-17T14:00:00-04:00",
+      "source": "https://www.federalreserve.gov/monetarypolicy/fomccalendars.htm",
+      "provider": "FED",
+      "importance": "높음"
+    },
+    {
+      "title": "FOMC 금리 결정",
+      "at": "2027-04-28T14:00:00-04:00",
+      "source": "https://www.federalreserve.gov/monetarypolicy/fomccalendars.htm",
+      "provider": "FED",
+      "importance": "높음"
+    },
+    {
+      "title": "FOMC 금리 결정 · 경제전망",
+      "at": "2027-06-09T14:00:00-04:00",
+      "source": "https://www.federalreserve.gov/monetarypolicy/fomccalendars.htm",
+      "provider": "FED",
+      "importance": "높음"
+    },
+    {
+      "title": "FOMC 금리 결정",
+      "at": "2027-07-28T14:00:00-04:00",
+      "source": "https://www.federalreserve.gov/monetarypolicy/fomccalendars.htm",
+      "provider": "FED",
+      "importance": "높음"
+    },
+    {
+      "title": "FOMC 금리 결정 · 경제전망",
+      "at": "2027-09-15T14:00:00-04:00",
+      "source": "https://www.federalreserve.gov/monetarypolicy/fomccalendars.htm",
+      "provider": "FED",
+      "importance": "높음"
+    },
+    {
+      "title": "FOMC 금리 결정",
+      "at": "2027-10-27T14:00:00-04:00",
+      "source": "https://www.federalreserve.gov/monetarypolicy/fomccalendars.htm",
+      "provider": "FED",
+      "importance": "높음"
+    },
+    {
+      "title": "FOMC 금리 결정 · 경제전망",
+      "at": "2027-12-08T14:00:00-05:00",
+      "source": "https://www.federalreserve.gov/monetarypolicy/fomccalendars.htm",
+      "provider": "FED",
+      "importance": "높음"
+    }
+  ]
+}

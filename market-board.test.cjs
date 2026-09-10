@@ -1,0 +1,17 @@
+const fs=require('node:fs'),vm=require('node:vm'),assert=require('node:assert/strict');
+const ctx=vm.createContext({Date,console});for(const file of ['macro.js','market-board.js'])vm.runInContext(fs.readFileSync(file,'utf8'),ctx);
+const run=code=>vm.runInContext(code,ctx);
+assert.equal(run('boardComposite([{score:null},{score:null}]).score'),null);
+assert.equal(run('boardComposite([{score:1},{score:1}]).label'),'판단 보류');
+assert.equal(run('boardComposite([{score:1},{score:1},{score:0},{score:null}]).score'),83);
+assert.equal(run('boardComposite([{score:-1},{score:-1},{score:0}]).label'),'Risk-Off 우세');
+assert.equal(run('boardFresh("2026-08-01",7,Date.parse("2026-09-10"))'),false);
+assert.equal(run('boardFresh("2026-09-11",7,Date.parse("2026-09-10"))'),false);
+assert.equal(run('boardSignals({},Date.parse("2026-09-10")).filter(x=>x.score!==null).length'),0);
+assert.equal(run('boardTrend([{date:"2026-09-01",value:10},{date:"2026-09-08",value:15}],1)'),5);
+assert.equal(run('boardTrend([{date:"2026-08-01",value:10},{date:"2026-09-08",value:15}],1)'),null);
+assert.equal(run('boardTrend([{date:"2026-09-08",value:15}],13)'),null);
+assert.equal(run('boardUpcoming([{at:"2026-09-10T00:00:00Z"},{at:"2026-09-17T00:00:00Z"},{at:"2026-09-09T23:59:59Z"}],Date.parse("2026-09-10T00:00:00Z")).length'),1);
+assert.match(run('boardTime("2026-09-11T08:30:00-04:00")'),/21:30/);
+assert.match(run('boardTime("2026-11-10T08:30:00-05:00")'),/22:30/);
+console.log('Passed: missing/stale signals, coverage, score, calendar boundaries, KST daylight saving, weekly changes.');

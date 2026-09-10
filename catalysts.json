@@ -1,0 +1,17 @@
+{
+  "tickers": {
+    "IONQ": {
+      "source": "https://investors.ionq.com/events-and-presentations/default.aspx",
+      "checkedAt": "2026-09-10",
+      "events": [
+        {"kind":"Investor Day","title":"IonQ Investor Day 2026","at":"2026-09-08T12:30:00-04:00","source":"https://investors.ionq.com/events-and-presentations/default.aspx"},
+        {"kind":"컨퍼런스","title":"Quantum World Congress 2026","date":"2026-09-23","end":"2026-09-25","source":"https://investors.ionq.com/financials/quarterly-results/"}
+      ]
+    },
+    "LAES": {
+      "source":"https://www.sealsq.com/investors/events",
+      "checkedAt":"2026-09-10",
+      "events":[]
+    }
+  }
+}
