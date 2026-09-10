@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "fetchedAt": "2026-09-09T01:33:16.127521+00:00",
+  "fetchedAt": "2026-09-10T01:28:42.489872+00:00",
   "series": {
     "DGS2": {
       "rows": [
@@ -1503,10 +1503,14 @@
         {
           "date": "2026-09-04",
           "value": 4.37
+        },
+        {
+          "date": "2026-09-08",
+          "value": 4.39
         }
       ],
       "source": "https://fred.stlouisfed.org/series/DGS2",
-      "fetchedAt": "2026-09-09T01:33:16.127521+00:00",
+      "fetchedAt": "2026-09-10T01:28:42.489872+00:00",
       "failed": false
     },
     "DGS10": {
@@ -3010,10 +3014,14 @@
         {
           "date": "2026-09-04",
           "value": 4.78
+        },
+        {
+          "date": "2026-09-08",
+          "value": 4.8
         }
       ],
       "source": "https://fred.stlouisfed.org/series/DGS10",
-      "fetchedAt": "2026-09-09T01:33:16.127521+00:00",
+      "fetchedAt": "2026-09-10T01:28:42.489872+00:00",
       "failed": false
     },
     "DFII10": {
@@ -4517,10 +4525,14 @@
         {
           "date": "2026-09-04",
           "value": 2.43
+        },
+        {
+          "date": "2026-09-08",
+          "value": 2.43
         }
       ],
       "source": "https://fred.stlouisfed.org/series/DFII10",
-      "fetchedAt": "2026-09-09T01:33:16.127521+00:00",
+      "fetchedAt": "2026-09-10T01:28:42.489872+00:00",
       "failed": false
     },
     "T10YIE": {
@@ -6028,10 +6040,14 @@
         {
           "date": "2026-09-08",
           "value": 2.37
+        },
+        {
+          "date": "2026-09-09",
+          "value": 2.37
         }
       ],
       "source": "https://fred.stlouisfed.org/series/T10YIE",
-      "fetchedAt": "2026-09-09T01:33:16.127521+00:00",
+      "fetchedAt": "2026-09-10T01:28:42.489872+00:00",
       "failed": false
     },
     "VIXCLS": {
@@ -7583,10 +7599,14 @@
         {
           "date": "2026-09-07",
           "value": 15.3
+        },
+        {
+          "date": "2026-09-08",
+          "value": 15.72
         }
       ],
       "source": "https://fred.stlouisfed.org/series/VIXCLS",
-      "fetchedAt": "2026-09-09T01:33:16.127521+00:00",
+      "fetchedAt": "2026-09-10T01:28:42.489872+00:00",
       "failed": false
     }
   }
