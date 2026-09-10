@@ -7,7 +7,7 @@ import urllib.request
 from datetime import date, datetime, timedelta, timezone
 from pathlib import Path
 
-SERIES = ['DGS2', 'DGS10', 'DGS30', 'DFII10', 'T10YIE', 'VIXCLS', 'WALCL', 'WTREGEN', 'RRPONTSYD', 'WRESBAL']
+SERIES = ['DGS2', 'DGS5', 'DGS10', 'DGS30', 'DFII10', 'T10YIE', 'VIXCLS', 'WALCL', 'WTREGEN', 'RRPONTSYD', 'WRESBAL']
 
 def parse_csv(text, series):
     result = []

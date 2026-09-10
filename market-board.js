@@ -1,4 +1,24 @@
 const BOARD_DAY=86400000;
+function boardBondProxy(payload) {
+  const tenors=['DGS2','DGS5','DGS10','DGS30'].map(id=>new Map(macroClean(payload?.series?.[id]?.rows).map(r=>[r.date,r.value])));
+  const dates=[...tenors[0].keys()].filter(date=>tenors.every(t=>t.has(date))).sort();
+  const result=[];
+  // Preserve the original 21-change population variance, annualization and scaling.
+  for(let i=21;i<dates.length;i++){
+    const annualized=tenors.map(t=>{
+      const sample=dates.slice(i-20,i+1).map((date,j)=>(t.get(date)-t.get(dates[i-21+j]))*100);
+      const mean=sample.reduce((a,b)=>a+b,0)/21;
+      return Math.sqrt(sample.reduce((sum,x)=>sum+(x-mean)**2,0)/21)*Math.sqrt(252);
+    });
+    const raw=1.1255*annualized.reduce((a,b)=>a+b,0)/4;
+    result.push({date:dates[i],value:Math.max(55,Math.min(180,raw)),raw});
+  }
+  return result.slice(-260);
+}
+function boardBondRegime(value) {
+  if(!Number.isFinite(value))return {label:'자료 미확보',score:null,index:-1};
+  return value<80?{label:'안정',score:1,index:0}:value<100?{label:'주의',score:0,index:1}:value<120?{label:'높음',score:-1,index:2}:{label:'스트레스',score:-1,index:3};
+}
 function boardFresh(date,days=7,now=Date.now()) {const age=now-Date.parse(date);return Number.isFinite(age)&&age>=0&&age<=days*BOARD_DAY;}
 function boardTrend(rows,weeks) {
   const last=rows.at(-1);if(!last)return null;
@@ -8,14 +28,14 @@ function boardTrend(rows,weeks) {
 }
 function boardSignals(data,now=Date.now()) {
   const s=data.macro?.series||{},rows=id=>macroClean(s[id]?.rows),rate=rows('DGS10'),liq=rows('WRESBAL');
-  const f=data.fear?.fear_and_greed,p=data.options?.rows?.at(-1),r=macroStats(rate,100),l=boardTrend(liq,4);
+  const f=data.fear?.fear_and_greed,p=data.options?.rows?.at(-1),r=macroStats(rate,100),l=boardTrend(liq,4),proxy=boardBondProxy(data.macro).at(-1);
   const signal=(name,value,date,score,rule,days=7)=>({name,value,date,score:boardFresh(date,days,now)&&Number.isFinite(score)?score:null,rule});
   return [
     signal('유동성',l===null?'미확보':macroSigned(l/1000,'$B / 4주'),liq.at(-1)?.date,l===null?null:l>10000?1:l< -10000?-1:0,'지급준비금 4주 변화 ±$10B',14),
     signal('금리',r.week===null?'미확보':macroSigned(r.week,'bp / 5관측'),r.last?.date,r.week===null?null:r.week>5?-1:r.week< -5?1:0,'10년 금리 5관측 변화 ±5bp'),
     signal('옵션 · Equity P/C',typeof p?.equity_pc==='number'?p.equity_pc.toFixed(2):'미확보',p?.date,typeof p?.equity_pc!=='number'?null:p.equity_pc<0.6?1:p.equity_pc>0.8?-1:0,'Equity P/C <0.6 선호 / >0.8 회피'),
     signal('Fear & Greed',typeof f?.score==='number'?f.score.toFixed(0)+' / 100':'미확보',f?.timestamp,typeof f?.score!=='number'?null:f.score>=55?1:f.score<=45?-1:0,'55 이상 선호 / 45 이하 회피'),
-    signal('MOVE','공식 수치 미연결',null,null,'채권 옵션의 예상 변동성 · 점수 제외')
+    signal('국채 변동성 · 대체',proxy?proxy.value.toFixed(1)+' / 자체 지수':'미확보',proxy?.date,boardBondRegime(proxy?.value).score,'공식 MOVE 아님 · <80 우호 / 80~100 중립 / ≥100 부담')
   ];
 }
 function boardComposite(signals) {
@@ -31,13 +51,33 @@ async function boardFetch(file) {
 function boardSection(title,description,id) {const el=radarNode('section',undefined,'radar-panel board-section');el.id=id;el.append(radarNode('h2',title),radarNode('p',description,'board-subtitle'));return el;}
 function boardCard(label,value,detail) {const el=radarNode('article',undefined,'board-card');el.append(radarNode('h3',label),radarNode('strong',value),radarNode('p',detail));return el;}
 function boardTime(at) {return new Date(at).toLocaleString('ko-KR',{timeZone:'Asia/Seoul',month:'long',day:'numeric',weekday:'short',hour:'2-digit',minute:'2-digit',hour12:false})+' KST';}
+function boardDrawCharts(container,data) {
+  const wasOpen=container.querySelector('details')?.open;
+  const f=data.fear?.fear_and_greed,hasFear=typeof f?.score==='number'&&Number.isFinite(f.score)&&f.score>=0&&f.score<=100;
+  const fear=boardCard('Fear & Greed',hasFear?f.score.toFixed(0)+' / 100':'미확보','CNN 투자심리 · 종합 점수와 같은 공통 자료');
+  const fearLabels=['극도 공포','공포','중립','탐욕','극도 탐욕'],fearIndex=!hasFear?-1:f.score<25?0:f.score<45?1:f.score<=55?2:f.score<=75?3:4;
+  const fearScale=radarNode('div',undefined,'board-fear-scale');fearLabels.forEach((label,index)=>{const cell=radarNode('span',label);if(index===fearIndex)cell.className='active';fearScale.append(cell);});fear.append(fearScale,radarNode('p',hasFear?fearLabels[fearIndex]:'자료 확인 필요'),radarNode('small',f?.timestamp?'기준 '+boardTime(f.timestamp)+(boardFresh(f.timestamp)?'':' · 오래된 자료 / 종합 제외'):'기준일 미확보'));
+  const fearHistory=macroClean((data.fear?.fear_and_greed_historical?.data||[]).filter(r=>Number.isFinite(r.x)&&Number.isFinite(r.y)).map(r=>({date:new Date(r.x).toISOString().slice(0,10),value:r.y})));
+  if(fearHistory.length)fear.append(macroChart(fearHistory,'Fear & Greed 최근 3개월',90,fearHistory.at(-1).date));
+  fear.append(officialLink('CNN 원문','https://www.cnn.com/markets/fear-and-greed'));
+  const rows=boardBondProxy(data.macro),last=rows.at(-1),regime=boardBondRegime(last?.value),fresh=boardFresh(last?.date);
+  const bond=boardCard('국채 금리 변동성 대체지표',last?last.value.toFixed(1)+' / 자체 지수':'미확보','기존 계산 방식 복원 · 공식 MOVE가 아닙니다.');
+  const lights=radarNode('div',undefined,'board-bond-lights');
+  ['안정','주의','높음','스트레스'].forEach((label,index)=>{const cell=radarNode('div',undefined,'bond-light bond-light-'+index);cell.append(radarNode('i'),radarNode('span',label),radarNode('small',['<80','80–<100','100–<120','≥120'][index]));if(fresh&&index===regime.index){cell.classList.add('active');cell.setAttribute('aria-label',label+' · 현재 구간');}lights.append(cell);});
+  bond.append(lights,radarNode('p',last?regime.label+' · 종합 기여 '+(fresh?(regime.score>0?'+1 (우호)':regime.score<0?'−1 (부담)':'0 (중립)'):'제외 (오래된 자료)'):'4개 만기의 공통 관측이 부족해 종합 점수에서 제외합니다.'),radarNode('small',last?'기준 '+last.date+' · 2·5·10·30년 공통 관측일':'기준일 미확보'));
+  if(last){const sample=rows.slice(-20),avg=sample.reduce((sum,r)=>sum+r.value,0)/sample.length,percentile=Math.round(rows.filter(r=>r.value<=last.value).length/rows.length*100);bond.append(radarNode('small',sample.length+'개 관측 평균 '+avg.toFixed(1)+' · 최근 '+rows.length+'개 관측 내 '+percentile+'백분위'),macroChart(rows,'국채 금리 변동성 대체지표 최근 3개월',90,last.date));if(last.raw<55||last.raw>180)bond.append(radarNode('small','범위 제한 전 계산값 '+last.raw.toFixed(1)+' → 표시 범위 55~180 적용'));}
+  const method=radarNode('details',undefined,'board-method');method.open=!!wasOpen;method.append(radarNode('summary','대체지표 계산 방식'),radarNode('p','FRED 2·5·10·30년 금리를 같은 날짜로 정렬합니다. 만기별 최근 21개 일간 변화(bp)의 모집단 표준편차를 √252로 연율화한 뒤, 네 값의 평균 ×1.1255를 55~180으로 제한합니다. 이전 화면과 같은 임의 보정 방식이며 공식 MOVE 추정 정확도가 검증된 모델은 아닙니다. 금리의 과거 변동폭을 요약하며, 금리 수준 및 옵션 기반 예상 변동성과 구분합니다. 기준일이 7일보다 오래되면 종합 점수에서 제외합니다.'));
+  bond.append(method);['DGS2','DGS5','DGS10','DGS30'].forEach((id,i)=>bond.append(officialLink('FRED '+[2,5,10,30][i]+'년','https://fred.stlouisfed.org/series/'+id)));
+  container.replaceChildren(fear,bond);
+}
 async function setupMarketBoard() {
   const shell=document.querySelector('.shell'),oldDetail=document.querySelector('.macro-detail');
   document.querySelector('.radar-compact')?.remove();
   const nowPanel=boardSection('MARKET NOW','주식을 살 환경인가? 시장의 위험선호와 부담 요인을 함께 확인합니다.','marketNow');
   const summary=radarNode('div','시장 자료 확인 중…','board-summary');summary.setAttribute('aria-live','polite');
   const signalsGrid=radarNode('div',undefined,'board-signals'),rates=radarNode('div',undefined,'board-rates');nowPanel.append(summary,signalsGrid,radarNode('h3','미국 국채 금리 · 최신 일별 관측'),rates);
-  const methodology=radarNode('details',undefined,'board-method');methodology.append(radarNode('summary','종합 신호의 기준과 한계'),radarNode('p','연결된 5개 축에 동일 가중치를 적용합니다. 선호 +1, 중립 0, 회피 −1을 평균해 0~100으로 환산합니다. 65 이상 Risk-On, 35 이하 Risk-Off입니다. 3개 축 미만이면 판단을 보류합니다. 미확보·오래된 자료는 제외하며, 일부 축이 없으면 잠정 신호입니다. 임의 기준의 환경 요약으로 상승 확률이나 매수 추천이 아닙니다. 심리와 옵션은 일부 겹치며 극단적 심리는 반전될 수 있습니다. 금리 하락도 경기 둔화 때문일 수 있으므로 원인을 확인하세요.'));
+  const chartPair=radarNode('div',undefined,'board-chart-pair');signalsGrid.after(chartPair);
+  const methodology=radarNode('details',undefined,'board-method');methodology.append(radarNode('summary','종합 신호의 기준과 한계'),radarNode('p','연결된 5개 축에 동일 가중치를 적용합니다. 선호 +1, 중립 0, 회피 −1을 평균해 0~100으로 환산합니다. 국채 변동성 축은 공식 MOVE 대신 자체 대체지표를 사용하며, 80 미만 +1 / 80 이상 100 미만 0 / 100 이상 −1을 반영합니다. 65 이상 Risk-On, 35 이하 Risk-Off입니다. 3개 축 미만이면 판단을 보류합니다. 미확보·오래된 자료는 제외하며, 일부 축이 없으면 잠정 신호입니다. 임의 기준의 환경 요약으로 상승 확률이나 매수 추천이 아닙니다. 심리와 옵션은 일부 겹치며 극단적 심리는 반전될 수 있습니다. 금리 하락도 경기 둔화 때문일 수 있으므로 원인을 확인하세요.'));
   const rateDetail=radarNode('details',undefined,'board-method');rateDetail.append(radarNode('summary','금리 수준 · 실질금리 · 과거 변동성 자세히 보기'));nowPanel.append(rateDetail,methodology);
   const liquidity=boardSection('LIQUIDITY','잔고와 1주 · 4주 · 13주 변화 · 단위 $B (10억 달러)','liquidityBoard');
   const liquidityBody=radarNode('div','유동성 자료 확인 중…','board-table-wrap');liquidity.append(liquidityBody);
@@ -63,6 +103,7 @@ async function setupMarketBoard() {
     summary.append(radarNode('p','우호: '+(positive.join(', ')||'뚜렷한 신호 없음')+' / 부담: '+(negative.join(', ')||'뚜렷한 신호 없음')));
     summary.append(radarNode('small','지표별 기준일이 다릅니다 · 일별/주별 자료, 실시간 아님'+(Object.values(data).some(d=>d?.localFallback)?' · 일부 자료는 배포 시 저장본':'')));
     signalsGrid.replaceChildren();signals.forEach(s=>{const card=boardCard(s.name,s.value,s.score===null?'미확보 또는 오래된 자료 · 종합 제외':s.score>0?'위험선호에 우호':s.score<0?'위험회피 요인':'중립');card.dataset.signal=s.score===null?'missing':s.score>0?'on':s.score<0?'off':'mixed';card.append(radarNode('small',s.date?'기준 '+s.date.slice(0,10):'기준일 미확보'),radarNode('small',s.rule));signalsGrid.append(card);});
+    boardDrawCharts(chartPair,data);
     rates.replaceChildren();for(const [id,name] of [['DGS2','2년'],['DGS10','10년'],['DGS30','30년']]){const s=macroStats(macroClean(data.macro?.series?.[id]?.rows),100),card=boardCard(name,s.last?s.last.value.toFixed(2)+'%':'미확보','직전 관측 대비 '+macroSigned(s.day,'bp'));card.append(radarNode('small',s.last?'기준 '+s.last.date+(boardFresh(s.last.date)?'':' · 오래된 자료'):'자료 연결 확인 중'),officialLink('FRED','https://fred.stlouisfed.org/series/'+id));rates.append(card);}
   }
   drawMarket();
