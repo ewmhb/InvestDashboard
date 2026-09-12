@@ -51,25 +51,7 @@ async function boardFetch(file) {
 function boardSection(title,description,id) {const el=radarNode('section',undefined,'radar-panel board-section');el.id=id;el.append(radarNode('h2',title),radarNode('p',description,'board-subtitle'));return el;}
 function boardCard(label,value,detail) {const el=radarNode('article',undefined,'board-card');el.append(radarNode('h3',label),radarNode('strong',value),radarNode('p',detail));return el;}
 function boardTime(at) {return new Date(at).toLocaleString('ko-KR',{timeZone:'Asia/Seoul',month:'long',day:'numeric',weekday:'short',hour:'2-digit',minute:'2-digit',hour12:false})+' KST';}
-function boardDrawCharts(container,data) {
-  const wasOpen=container.querySelector('details')?.open;
-  const f=data.fear?.fear_and_greed,hasFear=typeof f?.score==='number'&&Number.isFinite(f.score)&&f.score>=0&&f.score<=100;
-  const fear=boardCard('Fear & Greed',hasFear?f.score.toFixed(0)+' / 100':'미확보','CNN 투자심리 · 종합 점수와 같은 공통 자료');
-  const fearLabels=['극도 공포','공포','중립','탐욕','극도 탐욕'],fearIndex=!hasFear?-1:f.score<25?0:f.score<45?1:f.score<=55?2:f.score<=75?3:4;
-  const fearScale=radarNode('div',undefined,'board-fear-scale');fearLabels.forEach((label,index)=>{const cell=radarNode('span',label);if(index===fearIndex)cell.className='active';fearScale.append(cell);});fear.append(fearScale,radarNode('p',hasFear?fearLabels[fearIndex]:'자료 확인 필요'),radarNode('small',f?.timestamp?'기준 '+boardTime(f.timestamp)+(boardFresh(f.timestamp)?'':' · 오래된 자료 / 종합 제외'):'기준일 미확보'));
-  const fearHistory=macroClean((data.fear?.fear_and_greed_historical?.data||[]).filter(r=>Number.isFinite(r.x)&&Number.isFinite(r.y)).map(r=>({date:new Date(r.x).toISOString().slice(0,10),value:r.y})));
-  if(fearHistory.length)fear.append(macroChart(fearHistory,'Fear & Greed 최근 3개월',90,fearHistory.at(-1).date));
-  fear.append(officialLink('CNN 원문','https://www.cnn.com/markets/fear-and-greed'));
-  const rows=boardBondProxy(data.macro),last=rows.at(-1),regime=boardBondRegime(last?.value),fresh=boardFresh(last?.date);
-  const bond=boardCard('국채 금리 변동성 대체지표',last?last.value.toFixed(1)+' / 자체 지수':'미확보','기존 계산 방식 복원 · 공식 MOVE가 아닙니다.');
-  const lights=radarNode('div',undefined,'board-bond-lights');
-  ['안정','주의','높음','스트레스'].forEach((label,index)=>{const cell=radarNode('div',undefined,'bond-light bond-light-'+index);cell.append(radarNode('i'),radarNode('span',label),radarNode('small',['<80','80–<100','100–<120','≥120'][index]));if(fresh&&index===regime.index){cell.classList.add('active');cell.setAttribute('aria-label',label+' · 현재 구간');}lights.append(cell);});
-  bond.append(lights,radarNode('p',last?regime.label+' · 종합 기여 '+(fresh?(regime.score>0?'+1 (우호)':regime.score<0?'−1 (부담)':'0 (중립)'):'제외 (오래된 자료)'):'4개 만기의 공통 관측이 부족해 종합 점수에서 제외합니다.'),radarNode('small',last?'기준 '+last.date+' · 2·5·10·30년 공통 관측일':'기준일 미확보'));
-  if(last){const sample=rows.slice(-20),avg=sample.reduce((sum,r)=>sum+r.value,0)/sample.length,percentile=Math.round(rows.filter(r=>r.value<=last.value).length/rows.length*100);bond.append(radarNode('small',sample.length+'개 관측 평균 '+avg.toFixed(1)+' · 최근 '+rows.length+'개 관측 내 '+percentile+'백분위'),macroChart(rows,'국채 금리 변동성 대체지표 최근 3개월',90,last.date));if(last.raw<55||last.raw>180)bond.append(radarNode('small','범위 제한 전 계산값 '+last.raw.toFixed(1)+' → 표시 범위 55~180 적용'));}
-  const method=radarNode('details',undefined,'board-method');method.open=!!wasOpen;method.append(radarNode('summary','대체지표 계산 방식'),radarNode('p','FRED 2·5·10·30년 금리를 같은 날짜로 정렬합니다. 만기별 최근 21개 일간 변화(bp)의 모집단 표준편차를 √252로 연율화한 뒤, 네 값의 평균 ×1.1255를 55~180으로 제한합니다. 이전 화면과 같은 임의 보정 방식이며 공식 MOVE 추정 정확도가 검증된 모델은 아닙니다. 금리의 과거 변동폭을 요약하며, 금리 수준 및 옵션 기반 예상 변동성과 구분합니다. 기준일이 7일보다 오래되면 종합 점수에서 제외합니다.'));
-  bond.append(method);['DGS2','DGS5','DGS10','DGS30'].forEach((id,i)=>bond.append(officialLink('FRED '+[2,5,10,30][i]+'년','https://fred.stlouisfed.org/series/'+id)));
-  container.replaceChildren(fear,bond);
-}
+function boardDrawCharts(container,data){container.replaceChildren(legacyFearCard(data),legacyBondCard(data));}
 async function setupMarketBoard() {
   const shell=document.querySelector('.shell'),oldDetail=document.querySelector('.macro-detail');
   document.querySelector('.radar-compact')?.remove();
