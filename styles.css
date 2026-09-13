@@ -61,3 +61,4 @@
 @media(max-width:650px){.board-chart-pair .move-dashboard{grid-template-columns:minmax(0,1fr) 95px}.board-chart-pair .move-thermometer{justify-content:flex-start}}
 
 .board-chart-pair .move-thermometer{justify-content:flex-start}
+.board-detail-charts{grid-column:1/-1;grid-row:1;margin:0}.board-detail-charts>.fear-greed-indicator{grid-column:auto;grid-row:auto}
