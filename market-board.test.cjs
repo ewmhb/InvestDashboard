@@ -36,3 +36,9 @@ ctx.huge=huge;assert.equal(run('boardBondProxy(huge).at(-1).value'),180);
 const missing=JSON.parse(JSON.stringify(fixture));missing.series.DGS5.rows[10].value=null;ctx.missing=missing;
 assert.equal(run('boardBondProxy(missing).length'),28);
 console.log('Passed: original proxy formula, 22-observation minimum, common dates, clipping, traffic lights, stale score exclusion.');
+
+ctx.narrativeData={macro:fixture};
+assert.match(run('boardNarrative(narrativeData,boardSignals(narrativeData,Date.parse("2026-08-20")),Date.parse("2026-08-20"))'),/국채 변동성 대체지표/);
+assert.doesNotMatch(run('boardNarrative(narrativeData,boardSignals(narrativeData,Date.parse("2026-09-10")),Date.parse("2026-09-10"))'),/안정권으로/);
+assert.match(run('boardNarrative({},boardSignals({}))'),/최신 자료가 부족/);
+console.log('Passed: narrative uses available signals and excludes stale observations.');
