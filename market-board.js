@@ -42,6 +42,27 @@ function boardComposite(signals) {
   const valid=signals.filter(x=>x.score!==null),sum=valid.reduce((a,b)=>a+b.score,0),score=valid.length?Math.round(50+50*sum/valid.length):null;
   return {score,count:valid.length,label:valid.length<3?'판단 보류':score>=65?'Risk-On 우세':score<=35?'Risk-Off 우세':'혼조 · 중립'};
 }
+function boardNarrative(data,signals,now=Date.now()) {
+  const clauses=[],[liq,rate,options,fear,bond]=signals;
+  const direction=s=>s.score>0?'우호적입니다':s.score<0?'부담입니다':'중립 범위입니다';
+  if(liq.score!==null){
+    const rows=macroClean(data.macro?.series?.WRESBAL?.rows),change=boardTrend(rows,4);
+    clauses.push('은행 지급준비금은 4주간 '+Math.abs(change/100).toFixed(0)+'억 달러 '+(change>0?'증가해':change<0?'감소해':'변화가 없어')+' 유동성 여건이 '+direction(liq)+'.');
+    const context=[];
+    for(const [id,label,mult] of [['WTREGEN','TGA',0.001],['RRPONTSYD','ON RRP',1]]){
+      const series=macroClean(data.macro?.series?.[id]?.rows),delta=boardTrend(series,4);
+      if(delta!==null&&boardFresh(series.at(-1)?.date,14,now))context.push(label+'는 4주간 '+Math.abs(delta*mult*10).toFixed(0)+'억 달러 '+(delta>0?'늘어 유동성 흡수 방향':delta<0?'줄어 유동성 공급 방향':'변화가 없는 상태'));
+    }
+    if(context.length)clauses.push(context.join(', ')+'입니다.');
+  }
+  if(rate.score!==null){const stats=macroStats(macroClean(data.macro?.series?.DGS10?.rows),100);clauses.push('미 국채 10년 금리는 최근 5개 관측 동안 '+Math.abs(stats.week).toFixed(0)+'bp '+(stats.week>0?'올라':stats.week<0?'내려':'변동해')+' 금리 여건이 '+direction(rate)+'.');}
+  if(bond.score!==null)clauses.push('국채 변동성 대체지표는 '+(bond.score>0?'안정권으로 우호적입니다':bond.score<0?'높아 부담입니다':'주의 구간으로 중립입니다')+'.');
+  if(fear.score!==null)clauses.push('Fear & Greed '+Math.round(data.fear.fear_and_greed.score)+'점은 '+(fear.score>0?'위험선호':fear.score<0?'위험회피':'중립')+' 심리를 보여줍니다.');
+  if(options.score!==null)clauses.push('옵션 심리도 '+direction(options)+'.');
+  const missing=signals.filter(s=>s.score===null).map(s=>s.name);
+  if(missing.length)clauses.push(missing.join(' · ')+' 지표는 최신 자료가 부족해 해석에서 제외했습니다.');
+  return clauses.join(' ');
+}
 function boardStatusGauge(overall) {
   const box=radarNode('div',undefined,'board-status-gauge'),valid=overall.count>=3;
   const heading=radarNode('div',undefined,'status-score');
@@ -99,8 +120,7 @@ async function setupMarketBoard() {
     summary.dataset.state=overall.label.startsWith('Risk-On')?'on':overall.label.startsWith('Risk-Off')?'off':'mixed';
     const summaryText=radarNode('div',undefined,'board-summary-text');
     summaryText.append(radarNode('span','시장 종합 신호','status-eyebrow'),radarNode('strong',overall.label));
-    const positive=signals.filter(x=>x.score===1).length,negative=signals.filter(x=>x.score===-1).length,neutral=signals.filter(x=>x.score===0).length;
-    summaryText.append(radarNode('p',overall.count>=3?'우호 '+positive+' · 중립 '+neutral+' · 부담 '+negative:'최신 자료가 부족해 판단을 보류합니다.','status-balance'));
+    summaryText.append(radarNode('p',boardNarrative(data,signals),'status-narrative'));
     summaryText.append(radarNode('small','지표 '+overall.count+'개 반영'+(overall.count<5?' / 전체 5개 · 잠정':'')+' · 일별·주별 자료','status-coverage'));
     summary.replaceChildren(summaryText,boardStatusGauge(overall));
     signalsGrid.replaceChildren();signals.forEach(s=>{const card=boardCard(s.name,s.value,s.score===null?'미확보 또는 오래된 자료 · 종합 제외':s.score>0?'위험선호에 우호':s.score<0?'위험회피 요인':'중립');card.dataset.signal=s.score===null?'missing':s.score>0?'on':s.score<0?'off':'mixed';card.append(radarNode('small',s.date?'기준 '+s.date.slice(0,10):'기준일 미확보'),radarNode('small',s.rule));signalsGrid.append(card);});
