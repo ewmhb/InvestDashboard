@@ -51,14 +51,17 @@ async function boardFetch(file) {
 function boardSection(title,description,id) {const el=radarNode('section',undefined,'radar-panel board-section');el.id=id;el.append(radarNode('h2',title),radarNode('p',description,'board-subtitle'));return el;}
 function boardCard(label,value,detail) {const el=radarNode('article',undefined,'board-card');el.append(radarNode('h3',label),radarNode('strong',value),radarNode('p',detail));return el;}
 function boardTime(at) {return new Date(at).toLocaleString('ko-KR',{timeZone:'Asia/Seoul',month:'long',day:'numeric',weekday:'short',hour:'2-digit',minute:'2-digit',hour12:false})+' KST';}
-function boardDrawCharts(container,data){container.replaceChildren(legacyFearCard(data),legacyBondCard(data));}
+function boardDrawCharts(container,data){const previous=container.querySelector('[data-legacy-id="moveIndicator"]'),next=legacyBondCard(data);if(previous)previous.replaceWith(next);else container.append(next);}
 async function setupMarketBoard() {
   const shell=document.querySelector('.shell'),oldDetail=document.querySelector('.macro-detail');
   document.querySelector('.radar-compact')?.remove();
   const nowPanel=boardSection('MARKET NOW','주식을 살 환경인가? 시장의 위험선호와 부담 요인을 함께 확인합니다.','marketNow');
   const summary=radarNode('div','시장 자료 확인 중…','board-summary');summary.setAttribute('aria-live','polite');
   const signalsGrid=radarNode('div',undefined,'board-signals'),rates=radarNode('div',undefined,'board-rates');nowPanel.append(summary,signalsGrid,radarNode('h3','미국 국채 금리 · 최신 일별 관측'),rates);
-  const chartPair=radarNode('div',undefined,'board-chart-pair');signalsGrid.after(chartPair);
+  const chartPair=radarNode('div',undefined,'board-chart-pair board-detail-charts');
+  const originalFear=oldDetail?.querySelector('#fearGreedIndicator');
+  if(originalFear)chartPair.append(originalFear);
+  oldDetail?.querySelector('.risk-indicators')?.prepend(chartPair);
   const methodology=radarNode('details',undefined,'board-method');methodology.append(radarNode('summary','종합 신호의 기준과 한계'),radarNode('p','연결된 5개 축에 동일 가중치를 적용합니다. 선호 +1, 중립 0, 회피 −1을 평균해 0~100으로 환산합니다. 국채 변동성 축은 공식 MOVE 대신 자체 대체지표를 사용하며, 80 미만 +1 / 80 이상 100 미만 0 / 100 이상 −1을 반영합니다. 65 이상 Risk-On, 35 이하 Risk-Off입니다. 3개 축 미만이면 판단을 보류합니다. 미확보·오래된 자료는 제외하며, 일부 축이 없으면 잠정 신호입니다. 임의 기준의 환경 요약으로 상승 확률이나 매수 추천이 아닙니다. 심리와 옵션은 일부 겹치며 극단적 심리는 반전될 수 있습니다. 금리 하락도 경기 둔화 때문일 수 있으므로 원인을 확인하세요.'));
   const rateDetail=radarNode('details',undefined,'board-method');rateDetail.append(radarNode('summary','금리 수준 · 실질금리 · 과거 변동성 자세히 보기'));nowPanel.append(rateDetail,methodology);
   const liquidity=boardSection('LIQUIDITY','잔고와 1주 · 4주 · 13주 변화 · 단위 $B (10억 달러)','liquidityBoard');
