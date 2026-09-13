@@ -42,6 +42,33 @@ function boardComposite(signals) {
   const valid=signals.filter(x=>x.score!==null),sum=valid.reduce((a,b)=>a+b.score,0),score=valid.length?Math.round(50+50*sum/valid.length):null;
   return {score,count:valid.length,label:valid.length<3?'판단 보류':score>=65?'Risk-On 우세':score<=35?'Risk-Off 우세':'혼조 · 중립'};
 }
+function boardHistory(data,now=Date.now(),days=90) {
+  const fear=(data.fear?.fear_and_greed_historical?.data||[]).filter(r=>Number.isFinite(r.x)&&Number.isFinite(r.y)).map(r=>({timestamp:new Date(r.x).toISOString(),score:r.y}));
+  const current=data.fear?.fear_and_greed;if(current&&Number.isFinite(current.score))fear.push(current);
+  fear.sort((a,b)=>Date.parse(a.timestamp)-Date.parse(b.timestamp));
+  const end=Math.floor(now/BOARD_DAY)*BOARD_DAY;
+  return Array.from({length:days},(_,i)=>{
+    const day=end-(days-1-i)*BOARD_DAY,cutoff=Math.min(day+BOARD_DAY-1,now);
+    const series=Object.fromEntries(Object.entries(data.macro?.series||{}).map(([id,s])=>[id,{rows:(s.rows||[]).filter(r=>Date.parse(r.date)<=cutoff)}]));
+    const snapshot={macro:{series},fear:{fear_and_greed:fear.filter(r=>Date.parse(r.timestamp)<=cutoff).at(-1)},options:{rows:(data.options?.rows||[]).filter(r=>Date.parse(r.date)<=cutoff).sort((a,b)=>a.date.localeCompare(b.date))}};
+    const result=boardComposite(boardSignals(snapshot,cutoff));
+    return {date:new Date(day).toISOString().slice(0,10),score:result.count>=3?result.score:null,count:result.count};
+  });
+}
+function boardHistoryChart(rows) {
+  const box=radarNode('section',undefined,'board-history');box.setAttribute('aria-label','종합 신호 최근 90일 추이');
+  box.append(radarNode('h3','종합 신호 · 최근 90일'));
+  const ns='http://www.w3.org/2000/svg',svg=document.createElementNS(ns,'svg');svg.setAttribute('viewBox','0 0 520 210');svg.setAttribute('role','img');svg.setAttribute('aria-label','0~100점 종합 신호 추이, 50점 중립선. 점선은 일부 지표만 반영한 잠정 점수');
+  const add=(tag,attrs,text)=>{const e=document.createElementNS(ns,tag);Object.entries(attrs).forEach(([k,v])=>e.setAttribute(k,v));if(text!==undefined)e.textContent=text;svg.append(e);return e;};
+  const x=i=>34+i*470/Math.max(1,rows.length-1),y=v=>174-v*1.4;
+  for(const v of [0,50,100]){add('line',{x1:34,x2:504,y1:y(v),y2:y(v),class:v===50?'history-neutral':'history-grid'});add('text',{x:26,y:y(v)+4,'text-anchor':'end',class:'history-label'},String(v));}
+  rows.forEach((r,i)=>{const prev=rows[i-1];if(r.score===null)return;if(prev&&prev.score!==null)add('path',{d:`M${x(i-1)} ${y(prev.score)}L${x(i)} ${y(r.score)}`,class:'history-line'+(r.count<5||prev.count<5?' history-partial':'')});const dot=add('circle',{cx:x(i),cy:y(r.score),r:i===rows.length-1?4:2.5,class:'history-dot'});const title=document.createElementNS(ns,'title');title.textContent=`${r.date} · ${r.score}/100 · ${r.count}/5개 축`;dot.append(title);});
+  for(const i of [0,Math.floor((rows.length-1)/2),rows.length-1])if(rows[i])add('text',{x:x(i),y:199,'text-anchor':i===0?'start':i===rows.length-1?'end':'middle',class:'history-label'},rows[i].date.slice(5).replace('-','/'));
+  box.append(svg);
+  box.append(radarNode('small',rows.some(r=>r.score!==null)?'50점 중립 · 실선 5개 축 / 점선 3~4개 축 · 3개 미만은 공백':'계산 가능한 과거 자료가 부족합니다.'));
+  box.append(radarNode('small','현재 보유 자료를 관측일 기준으로 재계산한 추이입니다. 당시 발표 시점·수정 전 자료를 재현한 기록은 아닙니다.'));
+  return box;
+}
 function boardUpcoming(events,now=Date.now(),days=7) {return (events||[]).filter(e=>Date.parse(e.at)>=now&&Date.parse(e.at)<now+days*BOARD_DAY).sort((a,b)=>Date.parse(a.at)-Date.parse(b.at));}
 async function boardFetch(file) {
   if(location.hostname==='127.0.0.1'||location.hostname==='localhost'){const r=await fetch('./'+file,{cache:'no-store'});if(!r.ok)throw Error();return r.json();}
@@ -80,6 +107,7 @@ async function setupMarketBoard() {
   document.querySelector('.lead').textContent='시장 환경부터 확인하고, 내 종목의 일정과 뉴스를 살펴보세요.';
   const data={};
   await Promise.all([['macro','macro_data.json'],['fear','fear_greed.json'],['options','options_sentiment.json'],['calendar','economic_calendar.json'],['catalysts','catalysts.json']].map(async([key,file])=>{try{data[key]=await boardFetch(file);}catch{data[key]=null;}}));
+  let historyDay='',historyRows=[];
   function drawMarket(){
     const signals=boardSignals(data),overall=boardComposite(signals);
     summary.dataset.state=overall.label.startsWith('Risk-On')?'on':overall.label.startsWith('Risk-Off')?'off':'mixed';
@@ -87,6 +115,9 @@ async function setupMarketBoard() {
     const positive=signals.filter(x=>x.score===1).map(x=>x.name),negative=signals.filter(x=>x.score===-1).map(x=>x.name);
     summary.append(radarNode('p','우호: '+(positive.join(', ')||'뚜렷한 신호 없음')+' / 부담: '+(negative.join(', ')||'뚜렷한 신호 없음')));
     summary.append(radarNode('small','지표별 기준일이 다릅니다 · 일별/주별 자료, 실시간 아님'+(Object.values(data).some(d=>d?.localFallback)?' · 일부 자료는 배포 시 저장본':'')));
+    const today=new Date().toISOString().slice(0,10);if(historyDay!==today){historyRows=boardHistory(data);historyDay=today;}
+    historyRows[historyRows.length-1]={date:today,score:overall.count>=3?overall.score:null,count:overall.count};
+    const summaryText=radarNode('div',undefined,'board-summary-text');summaryText.append(...Array.from(summary.childNodes));summary.replaceChildren(summaryText,boardHistoryChart(historyRows));
     signalsGrid.replaceChildren();signals.forEach(s=>{const card=boardCard(s.name,s.value,s.score===null?'미확보 또는 오래된 자료 · 종합 제외':s.score>0?'위험선호에 우호':s.score<0?'위험회피 요인':'중립');card.dataset.signal=s.score===null?'missing':s.score>0?'on':s.score<0?'off':'mixed';card.append(radarNode('small',s.date?'기준 '+s.date.slice(0,10):'기준일 미확보'),radarNode('small',s.rule));signalsGrid.append(card);});
     boardDrawCharts(chartPair,data);
   }
