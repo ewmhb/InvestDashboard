@@ -57,7 +57,7 @@ async function setupMarketBoard() {
   document.querySelector('.radar-compact')?.remove();
   const nowPanel=boardSection('MARKET NOW','주식을 살 환경인가? 시장의 위험선호와 부담 요인을 함께 확인합니다.','marketNow');
   const summary=radarNode('div','시장 자료 확인 중…','board-summary');summary.setAttribute('aria-live','polite');
-  const signalsGrid=radarNode('div',undefined,'board-signals'),rates=radarNode('div',undefined,'board-rates');nowPanel.append(summary,signalsGrid,radarNode('h3','미국 국채 금리 · 최신 일별 관측'),rates);
+  const signalsGrid=radarNode('div',undefined,'board-signals');nowPanel.append(summary,signalsGrid);
   const chartPair=radarNode('div',undefined,'board-chart-pair board-detail-charts');
   const originalFear=oldDetail?.querySelector('#fearGreedIndicator');
   if(originalFear)chartPair.append(originalFear);
@@ -89,7 +89,6 @@ async function setupMarketBoard() {
     summary.append(radarNode('small','지표별 기준일이 다릅니다 · 일별/주별 자료, 실시간 아님'+(Object.values(data).some(d=>d?.localFallback)?' · 일부 자료는 배포 시 저장본':'')));
     signalsGrid.replaceChildren();signals.forEach(s=>{const card=boardCard(s.name,s.value,s.score===null?'미확보 또는 오래된 자료 · 종합 제외':s.score>0?'위험선호에 우호':s.score<0?'위험회피 요인':'중립');card.dataset.signal=s.score===null?'missing':s.score>0?'on':s.score<0?'off':'mixed';card.append(radarNode('small',s.date?'기준 '+s.date.slice(0,10):'기준일 미확보'),radarNode('small',s.rule));signalsGrid.append(card);});
     boardDrawCharts(chartPair,data);
-    rates.replaceChildren();for(const [id,name] of [['DGS2','2년'],['DGS10','10년'],['DGS30','30년']]){const s=macroStats(macroClean(data.macro?.series?.[id]?.rows),100),card=boardCard(name,s.last?s.last.value.toFixed(2)+'%':'미확보','직전 관측 대비 '+macroSigned(s.day,'bp'));card.append(radarNode('small',s.last?'기준 '+s.last.date+(boardFresh(s.last.date)?'':' · 오래된 자료'):'자료 연결 확인 중'),officialLink('FRED','https://fred.stlouisfed.org/series/'+id));rates.append(card);}
   }
   drawMarket();
   if(data.macro){const built=macroBuild(data.macro),grid=radarNode('div',undefined,'macro-grid');for(const [id,label,unit] of [['DFII10','10년 실질금리','%'],['T10YIE','10년 손익분기 인플레이션','%'],['REALIZED','10년 금리 실현변동성','bp/일'],['VIXCLS','주식 예상 변동성 VIX','pt']]){const rows=built[id],last=rows.at(-1),card=boardCard(label,last?last.value.toFixed(2)+' '+unit:'미확보',id==='REALIZED'?'20개 일간 금리 변화의 표본 표준편차 · MOVE와 다릅니다.':id==='T10YIE'?'물가 전망 외 위험·유동성 프리미엄도 포함합니다.':'최근 3개월 추세');if(last){card.append(radarNode('small','기준 '+last.date),macroChart(rows,label,90,last.date));}grid.append(card);}rateDetail.append(grid);}
