@@ -103,10 +103,13 @@ async function setupMarketBoard() {
   const liquidityBody=radarNode('div','유동성 자료 확인 중…','board-table-wrap');liquidity.append(liquidityBody);
   const week=boardSection('THIS WEEK','지금부터 7일간 · 한국시간 · CPI / PPI / 고용 / FOMC','thisWeek');
   const calendarBody=radarNode('div','공식 일정 확인 중…','board-events');week.append(calendarBody);
-  const stock=boardSection('MY STOCK','선택 종목의 주가와 확인된 Catalyst Timeline','myStock');
-  const catalyst=radarNode('div','종목 일정 확인 중…','board-catalyst');
+  const stock=boardSection('MY STOCK','미국 주식 티커를 입력하면 차트와 밸류에이션을 확인할 수 있습니다.','myStock');
+
   const control=document.querySelector('.control-bar'),chart=document.querySelector('.stock-chart-card'),metrics=document.querySelector('.metrics'),briefing=document.getElementById('visitChanges'),workspace=document.querySelector('.workspace');
-  stock.append(control,catalyst,chart);
+  const valuation=document.querySelector('.valuation-card'),quote=document.getElementById('quoteWidget')?.closest('article');
+  stock.append(control,chart);
+  if(quote)stock.append(quote);
+  if(valuation){valuation.style.cssText='margin-top:18px;padding:18px;border:1px solid var(--line);border-radius:8px;background:#fff;min-width:0';stock.append(valuation);}
   const news=boardSection('NEWS','선택 종목의 새로운 기사와 공식 소식','newsBoard');news.append(briefing,metrics,workspace);
   const hero=document.querySelector('.hero'),tape=document.querySelector('.market-strip');
   shell.replaceChildren(hero,nowPanel,liquidity,week,stock,news);
@@ -114,7 +117,7 @@ async function setupMarketBoard() {
   if(oldDetail){oldDetail.querySelector('summary').textContent='기존 지표 상세 · 차트와 출처';liquidity.append(oldDetail);}
   document.querySelector('.lead').textContent='시장 환경부터 확인하고, 내 종목의 일정과 뉴스를 살펴보세요.';
   const data={};
-  await Promise.all([['macro','macro_data.json'],['fear','fear_greed.json'],['options','options_sentiment.json'],['calendar','economic_calendar.json'],['catalysts','catalysts.json']].map(async([key,file])=>{try{data[key]=await boardFetch(file);}catch{data[key]=null;}}));
+  await Promise.all([['macro','macro_data.json'],['fear','fear_greed.json'],['options','options_sentiment.json'],['calendar','economic_calendar.json']].map(async([key,file])=>{try{data[key]=await boardFetch(file);}catch{data[key]=null;}}));
   function drawMarket(){
     const signals=boardSignals(data),overall=boardComposite(signals);
     summary.dataset.state=overall.label.startsWith('Risk-On')?'on':overall.label.startsWith('Risk-Off')?'off':'mixed';
@@ -131,12 +134,7 @@ async function setupMarketBoard() {
   const table=document.createElement('table'),thead=document.createElement('thead'),tr=document.createElement('tr');['지표','현재 잔고','1주 전 대비','4주 전 대비','13주 전 대비','기준일'].forEach(t=>tr.append(radarNode('th',t)));thead.append(tr);table.append(thead);const body=document.createElement('tbody');
   for(const [id,name,mult] of [['WTREGEN','TGA (주간 평균)',0.001],['RRPONTSYD','ON RRP',1],['WRESBAL','은행 지급준비금',0.001],['WALCL','연준 총자산',0.001]]){const rows=macroClean(data.macro?.series?.[id]?.rows).map(r=>({...r,value:r.value*mult})),last=rows.at(-1),row=document.createElement('tr');const title=document.createElement('th');title.append(officialLink(name,'https://fred.stlouisfed.org/series/'+id));row.append(title,radarNode('td',last?last.value.toLocaleString('en-US',{maximumFractionDigits:1}):'미확보'));[1,4,13].forEach(w=>row.append(radarNode('td',macroSigned(boardTrend(rows,w),'$B'))));row.append(radarNode('td',last?last.date+(boardFresh(last.date,14)?'':' · 지연'):'—'));body.append(row);}table.append(body);liquidityBody.replaceChildren(table,radarNode('p','TGA·ON RRP 감소는 대체로 유동성에 우호적이며, 지급준비금 증가는 은행 유동성 확대를 뜻합니다. 각 지표의 표시된 기준일을 기준으로 1주 전·4주 전·13주 전 잔고와 비교합니다. 해당 날짜에 자료가 없으면 그 이전의 가장 가까운 자료를 사용합니다. TGA는 FRED 주간 평균이며 아래 일별 잔고와 차이가 있습니다.','board-subtitle'));
   function drawCalendar(){calendarBody.replaceChildren();const upcoming=boardUpcoming(data.calendar?.events);const sources=data.calendar?.sources||{};calendarBody.append(radarNode('p','공식 일정 확인: '+Object.entries(sources).map(([k,v])=>k+' '+(v.checkedAt?.slice(0,10)||'미확인')+(v.failed?' (갱신 실패)':'')).join(' · '),'board-subtitle'));if(!upcoming.length)calendarBody.append(radarNode('p',data.calendar?'저장된 공식 일정 중 앞으로 7일에 해당하는 발표가 없습니다.':'일정을 불러오지 못했습니다. 공식 달력에서 확인하세요.'));upcoming.forEach(e=>{const card=boardCard(e.title,boardTime(e.at),'중요도 '+(e.importance||'높음'));card.append(officialLink('공식 일정',e.source));calendarBody.append(card);});calendarBody.append(officialLink('BLS 전체 일정','https://www.bls.gov/schedule/'),officialLink('FOMC 공식 일정','https://www.federalreserve.gov/monetarypolicy/fomccalendars.htm'));}
-  function drawCatalyst(){const ticker=typeof state!=='undefined'?state.ticker:document.getElementById('tickerSelect').value.toUpperCase(),record=data.catalysts?.tickers?.[ticker];catalyst.replaceChildren(radarNode('h3',ticker+' · Catalyst Timeline'));if(!record){catalyst.append(radarNode('p','이 종목의 확인된 일정이 아직 등록되지 않았습니다. 실적·공시와 기업 IR에서 발표일을 확인하세요.'));return;}catalyst.append(radarNode('p','공식 발표 확인 '+record.checkedAt+' · 확인된 일정만 수록 · 일정 변경은 원문 확인','board-subtitle'));const events=(record.events||[]).filter(e=>Date.parse(e.end||e.at||e.date+'T23:59:59-04:00')>=Date.now()-30*BOARD_DAY).sort((a,b)=>(a.at||a.date).localeCompare(b.at||b.date));if(!events.some(e=>Date.parse(e.at||e.date+'T23:59:59-04:00')>=Date.now()))catalyst.append(radarNode('p','확인된 향후 일정 없음 · 미발표 실적·인증 날짜는 추정하지 않습니다.'));events.forEach(e=>{const past=Date.parse(e.end||e.at||e.date+'T23:59:59-04:00')<Date.now(),card=boardCard(e.kind+' · '+(past?'지난 일정':'예정'),e.title,e.at?boardTime(e.at):e.date+(e.end?' ~ '+e.end:'')+' · 현지 날짜 / 시각 미정');card.append(officialLink('발표 원문',e.source));catalyst.append(card);});catalyst.append(officialLink('기업 공식 일정',record.source));}
-  drawCalendar();drawCatalyst();
-  document.getElementById('tickerSelect').addEventListener('change',drawCatalyst);
-  document.getElementById('tickerSelect').addEventListener('keydown',event=>{if(event.key==='Enter')drawCatalyst();});
-  document.getElementById('refreshNow').addEventListener('click',drawCatalyst);
-  const previousRender=render;render=function(){previousRender();drawCatalyst();};
-  setInterval(()=>{drawMarket();drawCalendar();drawCatalyst();},60000);
+  drawCalendar();
+  setInterval(()=>{drawMarket();drawCalendar();},60000);
 }
 if(typeof document!=='undefined')setupMarketBoard().catch(error=>{console.error('Market board:',error);const box=document.getElementById('marketNow');if(box)box.append(radarNode('p','일부 화면을 불러오지 못했습니다. 새로고침해 주세요.'));});
