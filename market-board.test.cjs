@@ -1,5 +1,5 @@
 const fs=require('node:fs'),vm=require('node:vm'),assert=require('node:assert/strict');
-const ctx=vm.createContext({Date,console});for(const file of ['macro.js','market-board.js'])vm.runInContext(fs.readFileSync(file,'utf8'),ctx);
+const ctx=vm.createContext({Date,console});for(const file of ['liquidity-data.js','macro.js','market-board.js'])vm.runInContext(fs.readFileSync(file,'utf8'),ctx);
 const run=code=>vm.runInContext(code,ctx);
 assert.equal(run('boardComposite([{score:null},{score:null}]).score'),null);
 assert.equal(run('boardComposite([{score:1},{score:1}]).label'),'판단 보류');

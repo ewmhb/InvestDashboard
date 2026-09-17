@@ -1,0 +1,11 @@
+const fs=require('node:fs'),vm=require('node:vm'),assert=require('node:assert/strict');
+const ctx=vm.createContext({Date,console});vm.runInContext(fs.readFileSync('liquidity-data.js','utf8'),ctx);
+const run=s=>vm.runInContext(s,ctx);
+const series=[{date:'2026-08-12',value:100},{date:'2026-08-19',value:110},{date:'2026-09-09',value:120}];ctx.rows=series;
+assert.equal(run('liquidityCompare(rows,4).from'),'2026-08-12');
+assert.equal(run('liquidityCompare(rows,4).to'),'2026-09-09');
+assert.equal(run('liquidityCompare(rows,4).value'),20);
+assert.equal(run('liquidityCompare([{date:"2026-08-05",value:100},{date:"2026-09-09",value:120}],4)'),null);
+assert.equal(run('liquidityCompare([{date:"2026-08-14",value:100},{date:"2026-09-13",value:120}],4).from'),'2026-08-14');
+assert.equal(run('liquidityCompare([],4)'),null);
+console.log('Passed: actual observation endpoints, weekend fallback, missing-week rejection, empty data.');

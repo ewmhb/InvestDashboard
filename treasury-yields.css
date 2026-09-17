@@ -1,12 +1,14 @@
 .market-tape-card #marketTapeWidget{display:flex;align-items:flex-start;flex-wrap:nowrap;overflow-x:auto;min-height:86px;margin-top:6px}
 .market-tape-others{flex:1 0 560px;min-width:560px;margin-top:0}
 #marketTapeWidget .treasury-yields{flex:0 0 auto;padding:0;margin:0;background:transparent;border:0}
-.treasury-grid{display:flex;flex-wrap:nowrap;height:72px;align-items:center}
-.treasury-ticker{position:relative;flex:0 0 190px;width:190px;padding:0 14px;border-right:1px solid var(--line);white-space:nowrap;line-height:1.4}
+.treasury-grid{display:flex;flex-wrap:nowrap;height:44px;align-items:center}
+.treasury-ticker{position:relative;flex:0 0 auto;width:auto;padding:0 16px;border-right:1px solid var(--line);white-space:nowrap;line-height:1.4}
 .treasury-ticker>a{font-size:14px;font-weight:600;color:var(--ink)}
-.treasury-value{display:inline-block;margin:3px 0 0 8px;font-size:17px;font-weight:600;font-variant-numeric:tabular-nums;color:var(--ink)}
+.treasury-value{display:inline-block;margin:0 0 0 10px;font-size:16px;font-weight:400;font-variant-numeric:tabular-nums;color:var(--ink)}
 .treasury-change{display:block;font-size:11px;font-weight:500;color:var(--muted)}
 .treasury-change.rising{color:#089981}.treasury-change.falling{color:#f23645}
 .treasury-time{display:block;font-size:9px;color:var(--muted);max-width:120px;overflow:hidden;text-overflow:ellipsis}
 .treasury-status{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap}
 .treasury-yields.refresh-error .treasury-time{color:#a5641d}.treasury-ticker.unavailable{opacity:.7}
+
+.treasury-ticker{display:flex;align-items:center;gap:0;height:24px}.treasury-time{margin-left:6px}.treasury-time:empty{display:none}
