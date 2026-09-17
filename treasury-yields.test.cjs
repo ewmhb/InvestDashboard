@@ -1,0 +1,17 @@
+const assert=require('node:assert/strict');
+const {parse,percent}=require('./treasury-yields.js');
+const quote=(symbol,value='4.680%')=>({symbol,code:'0',type:'BOND',last:value,previous_day_closing:'4.634%',change_pct:'-0.0859%',last_timedate:'1:29 AM EDT',realTime:'true',curmktstatus:'REG_MKT'});
+const payload=rows=>({ITVQuoteResult:{ITVQuote:rows}});
+const results=parse(payload([quote('US30Y','5.384%'),quote('US2Y'),quote('US10Y','5.025%')]));
+assert.deepEqual(results.map(q=>q.symbol),['US2Y','US10Y','US30Y']);
+assert.equal(results[0].value,4.68);assert.ok(Math.abs(results[0].changeBp-4.6)<1e-9);
+assert.equal(results[0].asOf,'1:29 AM EDT');
+assert.equal(results[0].market,'장중');
+assert.equal(parse(payload([quote('US2Y')]))[1].unavailable,true);
+for(const value of ['',null,'N/A','NaN','4.2 junk','0%','Infinity','31%'])assert.equal(parse(payload([quote('US2Y',value)]))[0].unavailable,true);
+assert.equal(parse(payload([{...quote('US2Y'),code:'1'}]))[0].unavailable,true);
+assert.equal(parse(payload([{...quote('US2Y'),last_timedate:''}]))[0].unavailable,true);
+assert.equal(parse(payload([{...quote('US2Y'),previous_day_closing:''}]))[0].changeBp,null);
+assert.equal(parse(payload([{...quote('US2Y'),realTime:'false'}]))[0].realtime,false);
+assert.equal(percent('5.025%'),5.025);assert.throws(()=>parse({}));
+console.log('Treasury tests passed: tenor mapping, percent-to-bp, missing/invalid data, timestamps, delayed flag.');
