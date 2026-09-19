@@ -27,6 +27,11 @@ function liquiditySeriesStatus(series){
   const last=series?.rows?.at(-1);
   return series?.failed?'수집 실패 · 보관값':!last?'자료 미확보':!liquidityFresh(last.date,series.frequency==='daily'?5:14)?'발표 지연 확인 필요':'최근 발표분';
 }
+function liquidityDirection(key,change){
+  if(change===0)return '유동성 영향 중립';
+  if(key==='TGA'||key==='RRPONTSYD')return change>0?'유동성 흡수 방향':'시장 유동성 증가 방향';
+  return change>0?'은행권 유동성 증가 방향':'은행권 유동성 감소 방향';
+}
 function renderLiquidityDetails(data){
   const set=(id,text)=>{const el=document.getElementById(id);if(el)el.textContent=text;};
   const series=data.series||{};
@@ -34,7 +39,9 @@ function renderLiquidityDetails(data){
     const source=series[key],rows=liquidityClean(source?.rows).map(r=>({...r,value:r.value*mult})),last=rows.at(-1),period=liquidityCompare(rows,4);
     set(prefix+'Balance',last?'$'+(last.value/1000).toFixed(1)+'B':'미확보');
     set(prefix+'AsOf',last?last.date+' 관측 · '+(key==='WRESBAL'?'주간 평균':'일별')+' · '+liquiditySeriesStatus(source):'자료 미확보');
-    set(prefix+'Change',period?'4주 '+signedBillions(period.value/1000)+' ('+period.from+' → '+period.to+')':'4주 비교 자료 부족');
+    set(prefix+'Change',period?'4주전대비 '+signedBillions(period.value/1000)+' · '+liquidityDirection(key,period.value)+' ('+period.from+' → '+period.to+')':'4주전대비 비교 자료 부족');
+    const changeEl=document.getElementById(prefix+'Change');
+    if(changeEl)changeEl.className=period?(key==='TGA'||key==='RRPONTSYD'?(period.value<0?'liquidity-up':period.value>0?'liquidity-down':''):(period.value>0?'liquidity-up':period.value<0?'liquidity-down':'')):'';
     if(rows.length>1)renderTgaChart(rows,prefix+'Chart',label,key==='WRESBAL'?'#2563a9':'#087a5b');
   }
   const rows=liquidityClean(data.rows),last=rows.at(-1),period=liquidityCompare(rows,4),week=liquidityCompare(rows,1);

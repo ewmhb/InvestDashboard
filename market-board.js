@@ -99,7 +99,7 @@ async function setupMarketBoard() {
   oldDetail?.querySelector('.risk-indicators')?.prepend(chartPair);
   const methodology=radarNode('details',undefined,'board-method');methodology.append(radarNode('summary','종합 신호의 기준과 한계'),radarNode('p','연결된 5개 축에 동일 가중치를 적용합니다. 선호 +1, 중립 0, 회피 −1을 평균해 0~100으로 환산합니다. 국채 변동성 축은 공식 MOVE 대신 자체 대체지표를 사용하며, 80 미만 +1 / 80 이상 100 미만 0 / 100 이상 −1을 반영합니다. 65 이상 Risk-On, 35 이하 Risk-Off입니다. 3개 축 미만이면 판단을 보류합니다. 미확보·오래된 자료는 제외하며, 일부 축이 없으면 잠정 신호입니다. 임의 기준의 환경 요약으로 상승 확률이나 매수 추천이 아닙니다. 심리와 옵션은 일부 겹치며 극단적 심리는 반전될 수 있습니다. 금리 하락도 경기 둔화 때문일 수 있으므로 원인을 확인하세요.'));
   const rateDetail=radarNode('details',undefined,'board-method');rateDetail.append(radarNode('summary','금리 수준 · 실질금리 · 과거 변동성 자세히 보기'));nowPanel.append(rateDetail,methodology);
-  const liquidity=boardSection('LIQUIDITY','최근 발표 잔고와 관측 종료일 기준 1주 · 4주 · 13주 변화 · 단위 $B (10억 달러)','liquidityBoard');
+  const liquidity=boardSection('LIQUIDITY','최근 발표 잔고와 각 관측일 기준 1주전대비 · 4주전대비 · 13주전대비 · 단위 $B (10억 달러)','liquidityBoard');
   const liquidityBody=radarNode('div','유동성 자료 확인 중…','board-table-wrap');liquidity.append(liquidityBody);
   const week=boardSection('THIS WEEK','지금부터 7일간 · 한국시간 · CPI / PPI / 고용 / FOMC','thisWeek');
   const calendarBody=radarNode('div','공식 일정 확인 중…','board-events');week.append(calendarBody);
@@ -134,7 +134,7 @@ async function setupMarketBoard() {
   if(data.macro){const built=macroBuild(data.macro),grid=radarNode('div',undefined,'macro-grid');for(const [id,label,unit] of [['DFII10','10년 실질금리','%'],['T10YIE','10년 손익분기 인플레이션','%'],['REALIZED','10년 금리 실현변동성','bp/일'],['VIXCLS','주식 예상 변동성 VIX','pt']]){const rows=built[id],last=rows.at(-1),card=boardCard(label,last?last.value.toFixed(2)+' '+unit:'미확보',id==='REALIZED'?'20개 일간 금리 변화의 표본 표준편차 · MOVE와 다릅니다.':id==='T10YIE'?'물가 전망 외 위험·유동성 프리미엄도 포함합니다.':'최근 3개월 추세');if(last){card.append(radarNode('small','기준 '+last.date),macroChart(rows,label,90,last.date));}grid.append(card);}rateDetail.append(grid);}
   function drawLiquidity(){
     const table=document.createElement('table'),thead=document.createElement('thead'),tr=document.createElement('tr');
-    ['지표','최근 발표 잔고','1주 변화','4주 변화','13주 변화','관측일 · 주기'].forEach(t=>tr.append(radarNode('th',t)));thead.append(tr);table.append(thead);const body=document.createElement('tbody');
+    ['지표','최근 발표 잔고','1주전대비','4주전대비','13주전대비','관측일 · 주기'].forEach(t=>tr.append(radarNode('th',t)));thead.append(tr);table.append(thead);const body=document.createElement('tbody');
     for(const [id,name,mult,frequency] of [['TGA','TGA (일별 잔고)',0.001,'일별'],['RRPONTSYD','ON RRP',1,'일별'],['WRESBAL','은행 지급준비금',0.001,'주간 평균'],['WALCL','연준 총자산',0.001,'주간 수요일']]){
       const source=data.liquidity?.series?.[id],rows=macroClean(source?.rows).map(r=>({...r,value:r.value*mult})),last=rows.at(-1),row=document.createElement('tr'),title=document.createElement('th');
       title.append(officialLink(name,source?.source||(id==='TGA'?'https://fiscaldata.treasury.gov/datasets/daily-treasury-statement/operating-cash-balance':'https://fred.stlouisfed.org/series/'+id)));

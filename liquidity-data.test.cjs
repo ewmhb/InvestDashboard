@@ -8,4 +8,7 @@ assert.equal(run('liquidityCompare(rows,4).value'),20);
 assert.equal(run('liquidityCompare([{date:"2026-08-05",value:100},{date:"2026-09-09",value:120}],4)'),null);
 assert.equal(run('liquidityCompare([{date:"2026-08-14",value:100},{date:"2026-09-13",value:120}],4).from'),'2026-08-14');
 assert.equal(run('liquidityCompare([],4)'),null);
+assert.equal(run('liquidityDirection("TGA",10)'),'유동성 흡수 방향');
+assert.equal(run('liquidityDirection("RRPONTSYD",-10)'),'시장 유동성 증가 방향');
+assert.equal(run('liquidityDirection("WRESBAL",10)'),'은행권 유동성 증가 방향');
 console.log('Passed: actual observation endpoints, weekend fallback, missing-week rejection, empty data.');
