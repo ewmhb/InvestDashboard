@@ -1,5 +1,5 @@
-.market-tape-card #marketTapeWidget{display:flex;align-items:flex-start;flex-wrap:nowrap;overflow-x:auto;min-height:86px;margin-top:6px}
-.market-tape-others{flex:1 0 560px;min-width:560px;margin-top:0}
+.market-tape-card #marketTapeWidget{display:flex;align-items:center;flex-wrap:nowrap;overflow-x:auto;min-height:72px;margin-top:6px;scroll-snap-type:x proximity}
+.market-tape-leading{flex:1 0 560px;min-width:560px;margin-top:0}.market-tape-trailing{flex:0 0 230px;min-width:230px;margin-top:0}.market-tape-treasury-anchor{flex:0 0 auto;display:flex;align-items:center;scroll-snap-align:start}
 #marketTapeWidget .treasury-yields{flex:0 0 auto;padding:0;margin:0;background:transparent;border:0}
 .treasury-grid{display:flex;flex-wrap:nowrap;height:44px;align-items:center}
 .treasury-ticker{position:relative;flex:0 0 auto;width:auto;padding:0 16px;border-right:1px solid var(--line);white-space:nowrap;line-height:1.4}
@@ -11,4 +11,4 @@
 .treasury-status{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap}
 .treasury-yields.refresh-error .treasury-time{color:#a5641d}.treasury-ticker.unavailable{opacity:.7}
 
-.treasury-ticker{display:flex;align-items:center;gap:0;height:24px}.treasury-time{margin-left:6px}.treasury-time:empty{display:none}
+.treasury-ticker{display:flex;align-items:center;gap:0;height:24px}.treasury-time{margin-left:6px}.treasury-time:empty{display:none}@media(max-width:650px){.market-tape-leading{flex-basis:560px}.market-tape-trailing{flex-basis:230px}}

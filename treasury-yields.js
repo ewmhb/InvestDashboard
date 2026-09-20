@@ -28,7 +28,7 @@
       name.href='https://www.cnbc.com/quotes/'+symbol;name.target='_blank';name.rel='noreferrer';card.append(name,value,time);grid.append(card);cards.set(symbol,{card,value,change,time});
     }
     const status=el('small','CNBC · Tradeweb 금리 · 1분마다 조회','treasury-status');status.setAttribute('role','status');
-    panel.append(grid,status);tape.prepend(panel);
+    panel.append(grid,status);(document.getElementById('marketTapeTreasuryAnchor')||tape).append(panel);
     let busy=false,lastSuccess=null;
     const checked=()=>new Date(lastSuccess).toLocaleString('ko-KR',{timeZone:'Asia/Seoul',hour12:false});
     async function refreshQuotes(){
