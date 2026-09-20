@@ -61,6 +61,8 @@
           <div><span>Equity P/C</span><strong id="equityPcValue">불러오는 중</strong><small id="equityPcReading">개별주식 심리</small></div>
           <div><span>Index P/C</span><strong id="indexPcValue">불러오는 중</strong><small id="indexPcReading">지수 헤지 수요</small></div>
           <div><span>Index P/C vs 20일</span><strong id="indexPcDeviation">-</strong><small id="indexPcAverage">기준선 계산 중</small></div>
+          <div><span>VIX</span><strong id="optionVixValue">불러오는 중</strong><small id="optionVixAsOf">FRED 일별 종가</small></div>
+          <div><span>SKEW</span><strong id="optionSkewValue">불러오는 중</strong><small id="optionSkewAsOf">Cboe 일별 종가</small></div>
           <div><span>종합 상태</span><strong id="optionSentimentState">분석 중</strong><small id="optionSentimentAsOf">Cboe 공식 데이터</small></div>
         </div>
         <p class="option-sentiment-note" id="optionSentimentNote">Equity와 Index P/C를 교차 분석해 위험선호와 지수 헤지 수요를 구분합니다.</p>
@@ -152,6 +154,6 @@
 <script src="./legacy-indicators.js?v=20260913-detail"></script>
 <script src="./market-board.js?v=20260919-labels"></script>
   <script src="./market-live-tape.js?v=20260920-cnbc-direct"></script>
-  <script src="./option-sentiment.js?v=20260920-hedge-context"></script>
+  <script src="./option-sentiment.js?v=20260920-vix-skew"></script>
 </body>
 </html>

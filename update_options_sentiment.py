@@ -1,6 +1,8 @@
 import json
 import re
 import urllib.request
+import csv
+from io import StringIO
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from datetime import datetime, timedelta
 from pathlib import Path
@@ -8,6 +10,8 @@ from pathlib import Path
 
 URL = "https://www.cboe.com/us/options/market_statistics/daily/"
 OUTPUT = Path(__file__).resolve().parent / "options_sentiment.json"
+MACRO = Path(__file__).resolve().parent / "macro_data.json"
+SKEW_URL = "https://cdn.cboe.com/api/global/us_indices/daily_prices/SKEW_History.csv"
 
 
 def download(url):
@@ -32,6 +36,29 @@ def parse_page(page):
         "index_pc": ratio(page, "INDEX PUT/CALL RATIO"),
         "equity_pc": ratio(page, "EQUITY PUT/CALL RATIO"),
     }
+
+
+def market_context():
+    context = {}
+    try:
+        rows = list(csv.DictReader(StringIO(download(SKEW_URL))))
+        latest = next((row for row in reversed(rows) if row.get("DATE") and row.get("SKEW")), None)
+        if latest:
+            context["skew"] = {
+                "date": datetime.strptime(latest["DATE"], "%m/%d/%Y").date().isoformat(),
+                "value": float(latest["SKEW"]),
+            }
+    except Exception as exc:
+        print(f"Skipped SKEW: {exc}")
+    try:
+        macro = json.loads(MACRO.read_text(encoding="utf-8"))
+        rows = macro.get("series", {}).get("VIXCLS", {}).get("rows", [])
+        latest = next((row for row in reversed(rows) if isinstance(row.get("value"), (int, float))), None)
+        if latest:
+            context["vix"] = {"date": latest["date"], "value": float(latest["value"])}
+    except Exception as exc:
+        print(f"Skipped VIX: {exc}")
+    return context
 
 
 latest = parse_page(download(URL))
@@ -63,4 +90,4 @@ if len(by_date) < 21:
 
 rows = list(by_date.values())
 rows = sorted(rows, key=lambda item: item["date"])[-65:]
-OUTPUT.write_text(json.dumps({"updated_at": latest["date"], "rows": rows}, indent=2), encoding="utf-8")
+OUTPUT.write_text(json.dumps({"updated_at": latest["date"], "rows": rows, "market_context": market_context()}, indent=2), encoding="utf-8")
