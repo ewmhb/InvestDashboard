@@ -26,13 +26,30 @@ function boardTrend(rows,weeks) {
   const prior=rows.filter(r=>Date.parse(r.date)<=target).at(-1);
   return prior&&target-Date.parse(prior.date)<=7*BOARD_DAY?last.value-prior.value:null;
 }
+const BOARD_TREASURY_URL='https://quote.cnbc.com/quote-html-webservice/quote.htm?symbols=US10Y&requestMethod=itv&noform=1&partnerId=2&fund=1&exthrs=1&output=json';
+function boardTreasuryState(quote) {
+  const value=Number(quote?.value),changeBp=Number(quote?.changeBp);
+  if(!Number.isFinite(value))return {score:null,label:'미확보',detail:'CNBC 장중 시세를 받지 못했습니다.'};
+  const change=Number.isFinite(changeBp)?'전일 대비 '+(changeBp>0?'+':'')+changeBp.toFixed(1)+'bp · ':'';
+  if(value>=5)return {score:-1,label:value.toFixed(3)+'% · '+change+'5% 상회',detail:'장기 금리가 5%를 웃돌아 할인율·채권 수급 부담이 큰 상태입니다.'};
+  if(value>=4.8)return {score:0,label:value.toFixed(3)+'% · '+change+'5% 재접근',detail:'장기 금리가 5%에 가까워져 금리 부담을 경계할 구간입니다.'};
+  return {score:1,label:value.toFixed(3)+'% · '+change+'5% 하회',detail:'장기 금리의 5% 재돌파 부담은 현재 완화된 상태입니다.'};
+}
+async function boardFetchTreasury() {
+  const response=await fetchWithTimeout(BOARD_TREASURY_URL,{cache:'no-store',credentials:'omit'},12000);
+  if(!response.ok)throw Error('CNBC 10년물 시세 조회 실패');
+  const row=(await response.json())?.ITVQuoteResult?.ITVQuote?.find(item=>item.symbol==='US10Y');
+  const value=Number(String(row?.last??'').replace('%','')),prior=Number(String(row?.previous_day_closing??'').replace('%',''));
+  if(!row||String(row.code)!=='0'||row.type!=='BOND'||!Number.isFinite(value)||value<=0||value>=30)throw Error('CNBC 10년물 시세 형식 오류');
+  return {value,changeBp:Number.isFinite(prior)?(value-prior)*100:null,asOf:String(row.last_timedate||''),market:row.curmktstatus==='REG_MKT'?'장중':'최근 시세',checkedAt:new Date().toISOString()};
+}
 function boardSignals(data,now=Date.now()) {
-  const s={...data.macro?.series,...data.liquidity?.series},rows=id=>macroClean(s[id]?.rows),rate=rows('DGS10'),liq=rows('WRESBAL');
-  const f=data.fear?.fear_and_greed,p=data.options?.rows?.at(-1),r=macroStats(rate,100),l=s.WRESBAL?.failed?null:boardTrend(liq,4),proxy=boardBondProxy(data.macro).at(-1);
+  const s={...data.macro?.series,...data.liquidity?.series},rows=id=>macroClean(s[id]?.rows),liq=rows('WRESBAL');
+  const f=data.fear?.fear_and_greed,p=data.options?.rows?.at(-1),l=s.WRESBAL?.failed?null:boardTrend(liq,4),proxy=boardBondProxy(data.macro).at(-1),treasury=boardTreasuryState(data.treasury);
   const signal=(name,value,date,score,rule,days=7)=>({name,value,date,score:boardFresh(date,days,now)&&Number.isFinite(score)?score:null,rule});
   return [
     signal('유동성',l===null?'미확보':macroSigned(l/1000,'$B / 4주 전 대비'),liq.at(-1)?.date,l===null?null:l>10000?1:l< -10000?-1:0,'주간 지급준비금 · '+(liquidityCompare(liq,4)?liquidityCompare(liq,4).from+' → '+liquidityCompare(liq,4).to:'비교 자료 부족')+' · ±$10B',14),
-    signal('금리',r.week===null?'미확보':macroSigned(r.week,'bp / 최근 5거래일'),r.last?.date,r.week===null?null:r.week>5?-1:r.week< -5?1:0,'10년 금리 최근 5거래일 변화 ±5bp'),
+    signal('금리',treasury.label,data.treasury?.checkedAt,treasury.score,'CNBC · 미국채 10년물 현재 시세 · 5% 이상 부담 / 4.8~5% 경계'),
     signal('옵션 · Equity P/C',typeof p?.equity_pc==='number'?p.equity_pc.toFixed(2):'미확보',p?.date,typeof p?.equity_pc!=='number'?null:p.equity_pc<0.6?1:p.equity_pc>0.8?-1:0,'Equity P/C <0.6 선호 / >0.8 회피'),
     signal('Fear & Greed',typeof f?.score==='number'?f.score.toFixed(0)+' / 100':'미확보',f?.timestamp,typeof f?.score!=='number'?null:f.score>=55?1:f.score<=45?-1:0,'55 이상 선호 / 45 이하 회피'),
     signal('국채 변동성 · 대체',proxy?proxy.value.toFixed(1)+' / 자체 지수':'미확보',proxy?.date,boardBondRegime(proxy?.value).score,'공식 MOVE 아님 · <80 우호 / 80~100 중립 / ≥100 부담')
@@ -55,7 +72,7 @@ function boardNarrative(data,signals,now=Date.now()) {
     }
     if(context.length)clauses.push(context.join(', ')+'입니다.');
   }
-  if(rate.score!==null){const stats=macroStats(macroClean(data.macro?.series?.DGS10?.rows),100);clauses.push('미 국채 10년 금리는 최근 5거래일 동안 '+Math.abs(stats.week).toFixed(0)+'bp '+(stats.week>0?'올라':stats.week<0?'내려':'변동해')+' 금리 여건이 '+direction(rate)+'.');}
+  if(rate.score!==null)clauses.push('CNBC 장중 미국채 10년물 '+rate.value+'. '+boardTreasuryState(data.treasury).detail);
   if(bond.score!==null)clauses.push('국채 변동성 대체지표는 '+(bond.score>0?'안정권으로 우호적입니다':bond.score<0?'높아 부담입니다':'주의 구간으로 중립입니다')+'.');
   if(fear.score!==null)clauses.push('Fear & Greed '+Math.round(data.fear.fear_and_greed.score)+'점은 '+(fear.score>0?'위험선호':fear.score<0?'위험회피':'중립')+' 심리를 보여줍니다.');
   if(options.score!==null)clauses.push('옵션 심리도 '+direction(options)+'.');
@@ -117,7 +134,7 @@ async function setupMarketBoard() {
   if(oldDetail){oldDetail.querySelector('summary').textContent='기존 지표 상세 · 차트와 출처';liquidity.append(oldDetail);}
   document.querySelector('.lead').textContent='시장 환경부터 확인하고, 내 종목의 일정과 뉴스를 살펴보세요.';
   const data={};
-  const refreshData=async()=>{await Promise.all([loadLiquidityData().then(x=>{data.liquidity=x}).catch(()=>{}), ...[['macro','macro_data.json'],['fear','fear_greed.json'],['options','options_sentiment.json'],['calendar','economic_calendar.json']].map(async([key,file])=>{try{data[key]=await boardFetch(file)}catch{}})]);};
+  const refreshData=async()=>{await Promise.all([loadLiquidityData().then(x=>{data.liquidity=x}).catch(()=>{}),boardFetchTreasury().then(x=>{data.treasury=x}).catch(()=>{delete data.treasury}), ...[['macro','macro_data.json'],['fear','fear_greed.json'],['options','options_sentiment.json'],['calendar','economic_calendar.json']].map(async([key,file])=>{try{data[key]=await boardFetch(file)}catch{}})]);};
   await refreshData();
   function drawMarket(){
     const signals=boardSignals(data),overall=boardComposite(signals);

@@ -8,6 +8,10 @@ assert.equal(run('boardComposite([{score:-1},{score:-1},{score:0}]).label'),'Ris
 assert.equal(run('boardFresh("2026-08-01",7,Date.parse("2026-09-10"))'),false);
 assert.equal(run('boardFresh("2026-09-11",7,Date.parse("2026-09-10"))'),false);
 assert.equal(run('boardSignals({},Date.parse("2026-09-10")).filter(x=>x.score!==null).length'),0);
+assert.equal(run('boardTreasuryState({value:5.01,changeBp:6.2}).score'),-1);
+assert.equal(run('boardTreasuryState({value:4.99,changeBp:1.1}).score'),0);
+assert.equal(run('boardTreasuryState({value:4.72,changeBp:-4.3}).score'),1);
+assert.equal(run('boardTreasuryState(null).score'),null);
 assert.equal(run('boardTrend([{date:"2026-09-01",value:10},{date:"2026-09-08",value:15}],1)'),5);
 assert.equal(run('boardTrend([{date:"2026-08-01",value:10},{date:"2026-09-08",value:15}],1)'),null);
 assert.equal(run('boardTrend([{date:"2026-09-08",value:15}],13)'),null);
@@ -41,4 +45,7 @@ ctx.narrativeData={macro:fixture};
 assert.match(run('boardNarrative(narrativeData,boardSignals(narrativeData,Date.parse("2026-08-20")),Date.parse("2026-08-20"))'),/국채 변동성 대체지표/);
 assert.doesNotMatch(run('boardNarrative(narrativeData,boardSignals(narrativeData,Date.parse("2026-09-10")),Date.parse("2026-09-10"))'),/안정권으로/);
 assert.match(run('boardNarrative({},boardSignals({}))'),/최신 자료가 부족/);
+ctx.liveTreasury={checkedAt:'2026-08-20T00:00:00Z',value:5.01,changeBp:6.2};
+assert.match(run('boardNarrative({treasury:liveTreasury},boardSignals({treasury:liveTreasury},Date.parse("2026-08-20")),Date.parse("2026-08-20"))'),/CNBC 장중 미국채 10년물 5.010%/);
+assert.doesNotMatch(run('boardNarrative({treasury:liveTreasury},boardSignals({treasury:liveTreasury},Date.parse("2026-08-20")),Date.parse("2026-08-20"))'),/최근 5거래일/);
 console.log('Passed: narrative uses available signals and excludes stale observations.');
