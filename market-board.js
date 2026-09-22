@@ -143,6 +143,20 @@ async function setupMarketBoard() {
   const data={};
   const refreshData=async()=>{await Promise.all([loadLiquidityData().then(x=>{data.liquidity=x}).catch(()=>{}),boardFetchTreasury().then(x=>{data.treasury=x}).catch(()=>{delete data.treasury}), boardFetchFearGreed().then(x=>{data.fear=x}).catch(()=>{}), ...[['macro','macro_data.json'],['options','options_sentiment.json'],['calendar','economic_calendar.json']].map(async([key,file])=>{try{data[key]=await boardFetch(file)}catch{}})]);};
   await refreshData();
+  const syncFearFromDetail=()=>{
+    const valueEl=document.getElementById('fearGreedValue'),asOfEl=document.getElementById('fearGreedAsOf'),score=Number(valueEl?.textContent),match=asOfEl?.textContent?.match(/(\d+)\.\s*(\d+)\./);
+    if(!Number.isFinite(score)||!match)return;
+    const now=new Date(),month=String(match[1]).padStart(2,'0'),day=String(match[2]).padStart(2,'0');
+    data.fear={fear_and_greed:{score,timestamp:now.getFullYear()+'-'+month+'-'+day+'T12:00:00+09:00'}};
+    drawMarket();
+  };
+  const detailFearValue=document.getElementById('fearGreedValue'),detailFearDate=document.getElementById('fearGreedAsOf');
+  if(detailFearValue&&detailFearDate){
+    const observer=new MutationObserver(syncFearFromDetail);
+    observer.observe(detailFearValue,{childList:true,subtree:true,characterData:true});
+    observer.observe(detailFearDate,{childList:true,subtree:true,characterData:true});
+    syncFearFromDetail();
+  }
   function drawMarket(){
     const signals=boardSignals(data),overall=boardComposite(signals);
     summary.dataset.state=overall.label.startsWith('Risk-On')?'on':overall.label.startsWith('Risk-Off')?'off':'mixed';
