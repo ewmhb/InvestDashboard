@@ -50,21 +50,6 @@ async function boardFetchFearGreed() {
   }
   return boardFetch('fear_greed.json');
 }
-
-function boardFredRows(csv) {
-  const [header,...lines]=csv.trim().split(/\r?\n/),keys=header.split(',');
-  return lines.map(line=>{const cells=line.split(',');return Object.fromEntries(keys.map((key,index)=>[key,index?Number(cells[index]):cells[index]]));});
-}
-function boardLaborLatest(rows,id) {return rows.filter(row=>Number.isFinite(row[id])).at(-1);}
-async function boardFetchLabor() {
-  const response=await fetchWithTimeout('https://fred.stlouisfed.org/graph/fredgraph.csv?id=ICSA,CCSA,UNRATE,PAYEMS',{cache:'no-store'},12000);
-  if(!response.ok)throw Error('FRED 고용 지표 조회 실패');
-  const rows=boardFredRows(await response.text());
-  if(!boardLaborLatest(rows,'ICSA')||!boardLaborLatest(rows,'CCSA')||!boardLaborLatest(rows,'UNRATE')||!boardLaborLatest(rows,'PAYEMS'))throw Error('FRED 고용 지표 형식 오류');
-  return {rows,checkedAt:new Date().toISOString()};
-}
-function boardLaborAverage(rows,id,count=4) {const values=rows.filter(row=>Number.isFinite(row[id])).slice(-count);return values.length===count?values.reduce((sum,row)=>sum+row[id],0)/count:null;}
-
 function boardSignals(data,now=Date.now()) {
   const s={...data.macro?.series,...data.liquidity?.series},rows=id=>macroClean(s[id]?.rows),liq=rows('WRESBAL');
   const f=data.fear?.fear_and_greed,p=data.options?.rows?.at(-1),l=s.WRESBAL?.failed?null:boardTrend(liq,4),proxy=boardBondProxy(data.macro).at(-1),treasury=boardTreasuryState(data.treasury);
@@ -119,7 +104,7 @@ function boardStatusGauge(overall) {
 function boardUpcoming(events,now=Date.now(),days=7) {return (events||[]).filter(e=>Date.parse(e.at)>=now&&Date.parse(e.at)<now+days*BOARD_DAY).sort((a,b)=>Date.parse(a.at)-Date.parse(b.at));}
 async function boardFetch(file) {
   if(location.hostname==='127.0.0.1'||location.hostname==='localhost'){const r=await fetch('./'+file,{cache:'no-store'});if(!r.ok)throw Error();return r.json();}
-  try {const r=await fetchWithTimeout('https://raw.githubusercontent.com/ewmhb/InvestDashboard/main/'+file+'?v='+Math.floor(Date.now()/900000),{credentials:'omit'},12000);if(!r.ok)throw Error();return await r.json();}
+  try {const r=await fetchWithTimeout('https://raw.githubusercontent.com/ewmhb/InvestDashboard/main/'+file+'?v='+Math.floor(Date.now()/60000),{credentials:'omit'},12000);if(!r.ok)throw Error();return await r.json();}
   catch {const r=await fetchWithTimeout('./'+file,{cache:'no-store'},8000);if(!r.ok)throw Error();const data=await r.json();data.localFallback=true;return data;}
 }
 function boardSection(title,description,id) {const el=radarNode('section',undefined,'radar-panel board-section');el.id=id;el.append(radarNode('h2',title),radarNode('p',description,'board-subtitle'));return el;}
@@ -195,13 +180,7 @@ async function setupMarketBoard() {
     const continuedChange=change('CCSA',4),continuedText=continuedChange===null?'4주 변화 계산 중':continuedChange>50000?'주의 · 4주 전보다 증가':continuedChange<-50000?'개선 · 4주 전보다 감소':'안정 · 4주 변화 제한적';
     const unemploymentChange=change('UNRATE'),unemploymentText=unemploymentChange===null?'전월 비교 계산 중':unemploymentChange>0?'주의 · 전월 대비 +'+unemploymentChange.toFixed(1)+'%p':unemploymentChange<0?'개선 · 전월 대비 '+unemploymentChange.toFixed(1)+'%p':'중립 · 전월과 동일';
     const payrollChange=change('PAYEMS'),payrollText=payrollChange===null?'전월 비교 계산 중':payrollChange<0?'주의 · 전월 대비 '+Math.round(payrollChange).toLocaleString('en-US')+'천명':payrollChange>0?'증가 · 전월 대비 +'+Math.round(payrollChange).toLocaleString('en-US')+'천명':'중립 · 전월과 동일';
-    laborBody.replaceChildren(
-      boardCard('신규 실업수당 청구',Math.round(initial.value/1000).toLocaleString('en-US')+'천 건',initialText+' · 4주 평균 '+(initialAvg===null?'—':Math.round(initialAvg/1000).toLocaleString('en-US')+'천 건')+' · 기준 '+initial.date),
-      boardCard('계속 실업수당 청구',(continued.value/1000000).toFixed(2)+'백만 건',continuedText+' · 기준 '+continued.date),
-      boardCard('실업률',unemployment.value.toFixed(1)+'%',unemploymentText+' · 기준 '+unemployment.date),
-      boardCard('비농업고용자 수',(payroll.value/1000).toFixed(1)+'백만 명',payrollText+' · 기준 '+payroll.date),
-      radarNode('p','출처: 미국 노동부·BLS, FRED 경유 · 주간 청구수당은 계절조정 기준이며 단일 주간 수치보다 4주 평균 추세를 우선합니다.','board-subtitle')
-    );
+    laborBody.replaceChildren(boardCard('신규 실업수당 청구',Math.round(initial.value/1000).toLocaleString('en-US')+'천 건',initialText+' · 4주 평균 '+(initialAvg===null?'—':Math.round(initialAvg/1000).toLocaleString('en-US')+'천 건')+' · 기준 '+initial.date),boardCard('계속 실업수당 청구',(continued.value/1000000).toFixed(2)+'백만 건',continuedText+' · 기준 '+continued.date),boardCard('실업률',unemployment.value.toFixed(1)+'%',unemploymentText+' · 기준 '+unemployment.date),boardCard('비농업고용자 수',(payroll.value/1000).toFixed(1)+'백만 명',payrollText+' · 기준 '+payroll.date),radarNode('p','출처: 미국 노동부·BLS, FRED 경유 · 주간 청구수당은 계절조정 기준이며 단일 주간 수치보다 4주 평균 추세를 우선합니다.','board-subtitle'));
   }
   drawLabor();
   if(data.macro){const built=macroBuild(data.macro),grid=radarNode('div',undefined,'macro-grid');for(const [id,label,unit] of [['DFII10','10년 실질금리','%'],['T10YIE','10년 손익분기 인플레이션','%'],['REALIZED','10년 금리 실현변동성','bp/일'],['VIXCLS','주식 예상 변동성 VIX','pt']]){const rows=built[id],last=rows.at(-1),card=boardCard(label,last?last.value.toFixed(2)+' '+unit:'미확보',id==='REALIZED'?'20개 일간 금리 변화의 표본 표준편차 · MOVE와 다릅니다.':id==='T10YIE'?'물가 전망 외 위험·유동성 프리미엄도 포함합니다.':'최근 3개월 추세');if(last){card.append(radarNode('small','기준 '+last.date),macroChart(rows,label,90,last.date));}grid.append(card);}rateDetail.append(grid);}
