@@ -33,7 +33,7 @@ def main():
             url = 'https://fred.stlouisfed.org/graph/fredgraph.csv?id=' + series + '&cosd=' + (date.today()-timedelta(days=550)).isoformat()
             with urllib.request.urlopen(url, timeout=45) as response:
                 rows = parse_csv(response.read().decode('utf-8-sig'), series)
-            if len(rows) < 30:
+            if len(rows) < (12 if series in {'UNRATE', 'PAYEMS'} else 30):
                 raise ValueError('Insufficient observations')
             output['series'][series] = {'rows': rows, 'source': source, 'fetchedAt': output['fetchedAt'], 'failed': False}
             successes += 1
