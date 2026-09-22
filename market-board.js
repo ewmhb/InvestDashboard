@@ -43,6 +43,13 @@ async function boardFetchTreasury() {
   if(!row||String(row.code)!=='0'||row.type!=='BOND'||!Number.isFinite(value)||value<=0||value>=30)throw Error('CNBC 10년물 시세 형식 오류');
   return {value,changeBp:Number.isFinite(prior)?(value-prior)*100:null,asOf:String(row.last_timedate||''),market:row.curmktstatus==='REG_MKT'?'장중':'최근 시세',checkedAt:new Date().toISOString()};
 }
+async function boardFetchFearGreed() {
+  const liveUrl='https://production.dataviz.cnn.io/index/fearandgreed/graphdata';
+  for (const url of [liveUrl,'https://api.allorigins.win/raw?url='+encodeURIComponent(liveUrl)]) {
+    try { const response=await fetchWithTimeout(url,{cache:'no-store'},7000); if (response.ok) { const payload=await response.json(); if (payload?.fear_and_greed?.timestamp) return payload; } } catch {}
+  }
+  return boardFetch('fear_greed.json');
+}
 function boardSignals(data,now=Date.now()) {
   const s={...data.macro?.series,...data.liquidity?.series},rows=id=>macroClean(s[id]?.rows),liq=rows('WRESBAL');
   const f=data.fear?.fear_and_greed,p=data.options?.rows?.at(-1),l=s.WRESBAL?.failed?null:boardTrend(liq,4),proxy=boardBondProxy(data.macro).at(-1),treasury=boardTreasuryState(data.treasury);
@@ -134,7 +141,7 @@ async function setupMarketBoard() {
   if(oldDetail){oldDetail.querySelector('summary').textContent='기존 지표 상세 · 차트와 출처';liquidity.append(oldDetail);}
   document.querySelector('.lead').textContent='시장 환경부터 확인하고, 내 종목의 일정과 뉴스를 살펴보세요.';
   const data={};
-  const refreshData=async()=>{await Promise.all([loadLiquidityData().then(x=>{data.liquidity=x}).catch(()=>{}),boardFetchTreasury().then(x=>{data.treasury=x}).catch(()=>{delete data.treasury}), ...[['macro','macro_data.json'],['fear','fear_greed.json'],['options','options_sentiment.json'],['calendar','economic_calendar.json']].map(async([key,file])=>{try{data[key]=await boardFetch(file)}catch{}})]);};
+  const refreshData=async()=>{await Promise.all([loadLiquidityData().then(x=>{data.liquidity=x}).catch(()=>{}),boardFetchTreasury().then(x=>{data.treasury=x}).catch(()=>{delete data.treasury}), boardFetchFearGreed().then(x=>{data.fear=x}).catch(()=>{}), ...[['macro','macro_data.json'],['options','options_sentiment.json'],['calendar','economic_calendar.json']].map(async([key,file])=>{try{data[key]=await boardFetch(file)}catch{}})]);};
   await refreshData();
   function drawMarket(){
     const signals=boardSignals(data),overall=boardComposite(signals);
