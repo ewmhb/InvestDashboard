@@ -158,7 +158,7 @@ async function setupMarketBoard() {
   if(oldDetail){oldDetail.querySelector('summary').textContent='기존 지표 상세 · 차트와 출처';liquidity.append(oldDetail);}
   document.querySelector('.lead').textContent='시장 환경부터 확인하고, 내 종목의 일정과 뉴스를 살펴보세요.';
   const data={};
-  const refreshData=async()=>{await Promise.all([loadLiquidityData().then(x=>{data.liquidity=x}).catch(()=>{}),boardFetchTreasury().then(x=>{data.treasury=x}).catch(()=>{delete data.treasury}), boardFetchFearGreed().then(x=>{data.fear=x}).catch(()=>{}),boardFetchLabor().then(x=>{data.labor=x}).catch(()=>{}), ...[['macro','macro_data.json'],['options','options_sentiment.json'],['calendar','economic_calendar.json']].map(async([key,file])=>{try{data[key]=await boardFetch(file)}catch{}})]);};
+  const refreshData=async()=>{await Promise.all([loadLiquidityData().then(x=>{data.liquidity=x}).catch(()=>{}),boardFetchTreasury().then(x=>{data.treasury=x}).catch(()=>{delete data.treasury}), boardFetchFearGreed().then(x=>{data.fear=x}).catch(()=>{}), ...[['macro','macro_data.json'],['options','options_sentiment.json'],['calendar','economic_calendar.json']].map(async([key,file])=>{try{data[key]=await boardFetch(file)}catch{}})]);};
   await refreshData();
   const syncFearFromDetail=()=>{
     const valueEl=document.getElementById('fearGreedValue'),asOfEl=document.getElementById('fearGreedAsOf'),score=Number(valueEl?.textContent),match=asOfEl?.textContent?.match(/(\d+)\.\s*(\d+)\./);
@@ -187,19 +187,19 @@ async function setupMarketBoard() {
   }
   drawMarket();
   function drawLabor(){
-    const rows=data.labor?.rows||[],weekly=id=>rows.filter(row=>Number.isFinite(row[id])),latest=id=>boardLaborLatest(rows,id),previous=(id,count=1)=>weekly(id).at(-1-count),change=(id,count=1)=>{const now=latest(id),prior=previous(id,count);return now&&prior?now[id]-prior[id]:null;};
+    const series=data.macro?.series||{},rows=id=>(series[id]?.rows||[]).filter(row=>Number.isFinite(row.value)),latest=id=>rows(id).at(-1),change=(id,count=1)=>{const values=rows(id),now=values.at(-1),prior=values.at(-1-count);return now&&prior?now.value-prior.value:null;},average=(id,prior=false)=>{const values=rows(id),sample=prior?values.slice(-8,-4):values.slice(-4);return sample.length===4?sample.reduce((sum,row)=>sum+row.value,0)/4:null;};
     const initial=latest('ICSA'),continued=latest('CCSA'),unemployment=latest('UNRATE'),payroll=latest('PAYEMS');
-    if(!initial||!continued||!unemployment||!payroll){laborBody.replaceChildren(radarNode('p','미국 고용 자료를 불러오지 못했습니다. FRED 원문에서 확인하세요.'));return;}
-    const initialAvg=boardLaborAverage(rows,'ICSA'),initialPriorAvg=boardLaborAverage(weekly('ICSA').slice(0,-4),'ICSA'),initialTrend=initialAvg!==null&&initialPriorAvg!==null?initialAvg-initialPriorAvg:null;
+    if(!initial||!continued||!unemployment||!payroll){laborBody.replaceChildren(radarNode('p','미국 고용 자료를 갱신 중입니다. 다음 공식 수집 후 표시됩니다.'));return;}
+    const initialAvg=average('ICSA'),initialPriorAvg=average('ICSA',true),initialTrend=initialAvg!==null&&initialPriorAvg!==null?initialAvg-initialPriorAvg:null;
     const initialText=initialTrend===null?'4주 평균 계산 중':initialTrend>10000?'주의 · 4주 평균 상승':initialTrend<-10000?'개선 · 4주 평균 하락':'안정 · 4주 평균 보합';
     const continuedChange=change('CCSA',4),continuedText=continuedChange===null?'4주 변화 계산 중':continuedChange>50000?'주의 · 4주 전보다 증가':continuedChange<-50000?'개선 · 4주 전보다 감소':'안정 · 4주 변화 제한적';
     const unemploymentChange=change('UNRATE'),unemploymentText=unemploymentChange===null?'전월 비교 계산 중':unemploymentChange>0?'주의 · 전월 대비 +'+unemploymentChange.toFixed(1)+'%p':unemploymentChange<0?'개선 · 전월 대비 '+unemploymentChange.toFixed(1)+'%p':'중립 · 전월과 동일';
     const payrollChange=change('PAYEMS'),payrollText=payrollChange===null?'전월 비교 계산 중':payrollChange<0?'주의 · 전월 대비 '+Math.round(payrollChange).toLocaleString('en-US')+'천명':payrollChange>0?'증가 · 전월 대비 +'+Math.round(payrollChange).toLocaleString('en-US')+'천명':'중립 · 전월과 동일';
     laborBody.replaceChildren(
-      boardCard('신규 실업수당 청구',Math.round(initial.ICSA/1000).toLocaleString('en-US')+'천 건',initialText+' · 4주 평균 '+(initialAvg===null?'—':Math.round(initialAvg/1000).toLocaleString('en-US')+'천 건')+' · 기준 '+initial.observation_date),
-      boardCard('계속 실업수당 청구',(continued.CCSA/1000000).toFixed(2)+'백만 건',continuedText+' · 기준 '+continued.observation_date),
-      boardCard('실업률',unemployment.UNRATE.toFixed(1)+'%',unemploymentText+' · 기준 '+unemployment.observation_date),
-      boardCard('비농업고용자 수',(payroll.PAYEMS/1000).toFixed(1)+'백만 명',payrollText+' · 기준 '+payroll.observation_date),
+      boardCard('신규 실업수당 청구',Math.round(initial.value/1000).toLocaleString('en-US')+'천 건',initialText+' · 4주 평균 '+(initialAvg===null?'—':Math.round(initialAvg/1000).toLocaleString('en-US')+'천 건')+' · 기준 '+initial.date),
+      boardCard('계속 실업수당 청구',(continued.value/1000000).toFixed(2)+'백만 건',continuedText+' · 기준 '+continued.date),
+      boardCard('실업률',unemployment.value.toFixed(1)+'%',unemploymentText+' · 기준 '+unemployment.date),
+      boardCard('비농업고용자 수',(payroll.value/1000).toFixed(1)+'백만 명',payrollText+' · 기준 '+payroll.date),
       radarNode('p','출처: 미국 노동부·BLS, FRED 경유 · 주간 청구수당은 계절조정 기준이며 단일 주간 수치보다 4주 평균 추세를 우선합니다.','board-subtitle')
     );
   }
