@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "fetchedAt": "2026-09-27T10:31:31.547926+00:00",
+  "fetchedAt": "2026-09-27T15:38:04.818984+00:00",
   "series": {
     "DGS2": {
       "rows": [
@@ -1510,7 +1510,7 @@
         }
       ],
       "source": "https://fred.stlouisfed.org/series/DGS2",
-      "fetchedAt": "2026-09-27T10:31:31.547926+00:00",
+      "fetchedAt": "2026-09-27T15:38:04.818984+00:00",
       "failed": false
     },
     "DGS5": {
@@ -3021,7 +3021,7 @@
         }
       ],
       "source": "https://fred.stlouisfed.org/series/DGS5",
-      "fetchedAt": "2026-09-27T10:31:31.547926+00:00",
+      "fetchedAt": "2026-09-27T15:38:04.818984+00:00",
       "failed": false
     },
     "DGS10": {
@@ -4532,7 +4532,7 @@
         }
       ],
       "source": "https://fred.stlouisfed.org/series/DGS10",
-      "fetchedAt": "2026-09-27T10:31:31.547926+00:00",
+      "fetchedAt": "2026-09-27T15:38:04.818984+00:00",
       "failed": false
     },
     "DGS30": {
@@ -6043,7 +6043,7 @@
         }
       ],
       "source": "https://fred.stlouisfed.org/series/DGS30",
-      "fetchedAt": "2026-09-27T10:31:31.547926+00:00",
+      "fetchedAt": "2026-09-27T15:38:04.818984+00:00",
       "failed": false
     },
     "DFII10": {
@@ -7554,7 +7554,7 @@
         }
       ],
       "source": "https://fred.stlouisfed.org/series/DFII10",
-      "fetchedAt": "2026-09-27T10:31:31.547926+00:00",
+      "fetchedAt": "2026-09-27T15:38:04.818984+00:00",
       "failed": false
     },
     "T10YIE": {
@@ -9069,7 +9069,7 @@
         }
       ],
       "source": "https://fred.stlouisfed.org/series/T10YIE",
-      "fetchedAt": "2026-09-27T10:31:31.547926+00:00",
+      "fetchedAt": "2026-09-27T15:38:04.818984+00:00",
       "failed": false
     },
     "VIXCLS": {
@@ -10620,7 +10620,7 @@
         }
       ],
       "source": "https://fred.stlouisfed.org/series/VIXCLS",
-      "fetchedAt": "2026-09-27T10:31:31.547926+00:00",
+      "fetchedAt": "2026-09-27T15:38:04.818984+00:00",
       "failed": false
     },
     "WALCL": {
@@ -10943,7 +10943,7 @@
         }
       ],
       "source": "https://fred.stlouisfed.org/series/WALCL",
-      "fetchedAt": "2026-09-27T10:31:31.547926+00:00",
+      "fetchedAt": "2026-09-27T15:38:04.818984+00:00",
       "failed": false
     },
     "WTREGEN": {
@@ -11266,7 +11266,7 @@
         }
       ],
       "source": "https://fred.stlouisfed.org/series/WTREGEN",
-      "fetchedAt": "2026-09-27T10:31:31.547926+00:00",
+      "fetchedAt": "2026-09-27T15:38:04.818984+00:00",
       "failed": false
     },
     "RRPONTSYD": {
@@ -12777,7 +12777,7 @@
         }
       ],
       "source": "https://fred.stlouisfed.org/series/RRPONTSYD",
-      "fetchedAt": "2026-09-27T10:31:31.547926+00:00",
+      "fetchedAt": "2026-09-27T15:38:04.818984+00:00",
       "failed": false
     },
     "WRESBAL": {
@@ -13100,7 +13100,7 @@
         }
       ],
       "source": "https://fred.stlouisfed.org/series/WRESBAL",
-      "fetchedAt": "2026-09-27T10:31:31.547926+00:00",
+      "fetchedAt": "2026-09-27T15:38:04.818984+00:00",
       "failed": false
     },
     "ICSA": {
@@ -13419,7 +13419,7 @@
         }
       ],
       "source": "https://fred.stlouisfed.org/series/ICSA",
-      "fetchedAt": "2026-09-27T10:31:31.547926+00:00",
+      "fetchedAt": "2026-09-27T15:38:04.818984+00:00",
       "failed": false
     },
     "CCSA": {
@@ -13734,7 +13734,7 @@
         }
       ],
       "source": "https://fred.stlouisfed.org/series/CCSA",
-      "fetchedAt": "2026-09-27T10:31:31.547926+00:00",
+      "fetchedAt": "2026-09-27T15:38:04.818984+00:00",
       "failed": false
     },
     "UNRATE": {
@@ -13809,7 +13809,7 @@
         }
       ],
       "source": "https://fred.stlouisfed.org/series/UNRATE",
-      "fetchedAt": "2026-09-27T10:31:31.547926+00:00",
+      "fetchedAt": "2026-09-27T15:38:04.818984+00:00",
       "failed": false
     },
     "PAYEMS": {
@@ -13888,7 +13888,7 @@
         }
       ],
       "source": "https://fred.stlouisfed.org/series/PAYEMS",
-      "fetchedAt": "2026-09-27T10:31:31.547926+00:00",
+      "fetchedAt": "2026-09-27T15:38:04.818984+00:00",
       "failed": false
     }
   }
