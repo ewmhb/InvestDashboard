@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "updated_at": "2026-10-17T19:19:19.760114+00:00",
+  "updated_at": "2026-10-18T00:58:06.484043+00:00",
   "series": {
     "WALCL": {
       "rows": [
@@ -322,7 +322,7 @@
         }
       ],
       "source": "https://fred.stlouisfed.org/series/WALCL",
-      "fetchedAt": "2026-10-17T19:19:14.439307+00:00",
+      "fetchedAt": "2026-10-18T00:58:00.341945+00:00",
       "failed": false,
       "frequency": "weekly"
     },
@@ -646,16 +646,12 @@
         }
       ],
       "source": "https://fred.stlouisfed.org/series/WRESBAL",
-      "fetchedAt": "2026-10-17T19:19:14.439307+00:00",
+      "fetchedAt": "2026-10-18T00:58:00.341945+00:00",
       "failed": false,
       "frequency": "weekly"
     },
     "RRPONTSYD": {
       "rows": [
-        {
-          "date": "2025-04-15",
-          "value": 88.878
-        },
         {
           "date": "2025-04-16",
           "value": 54.772
@@ -2158,16 +2154,12 @@
         }
       ],
       "source": "https://fred.stlouisfed.org/series/RRPONTSYD",
-      "fetchedAt": "2026-10-17T19:19:14.439307+00:00",
+      "fetchedAt": "2026-10-18T00:58:00.341945+00:00",
       "failed": false,
       "frequency": "daily"
     },
     "TGA": {
       "rows": [
-        {
-          "date": "2025-04-15",
-          "value": 600455.0
-        },
         {
           "date": "2025-04-16",
           "value": 638783.0
@@ -3678,7 +3670,7 @@
         }
       ],
       "source": "https://fiscaldata.treasury.gov/datasets/daily-treasury-statement/operating-cash-balance",
-      "fetchedAt": "2026-10-17T19:19:19.760114+00:00",
+      "fetchedAt": "2026-10-18T00:58:06.484043+00:00",
       "failed": false,
       "frequency": "daily"
     }
