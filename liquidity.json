@@ -1,13 +1,9 @@
 {
   "version": 2,
-  "updated_at": "2026-10-18T19:24:38.147387+00:00",
+  "updated_at": "2026-10-19T01:09:39.830518+00:00",
   "series": {
     "WALCL": {
       "rows": [
-        {
-          "date": "2025-04-16",
-          "value": 6727113.0
-        },
         {
           "date": "2025-04-23",
           "value": 6726930.0
@@ -322,16 +318,12 @@
         }
       ],
       "source": "https://fred.stlouisfed.org/series/WALCL",
-      "fetchedAt": "2026-10-18T19:24:33.547949+00:00",
+      "fetchedAt": "2026-10-19T01:09:35.030949+00:00",
       "failed": false,
       "frequency": "weekly"
     },
     "WRESBAL": {
       "rows": [
-        {
-          "date": "2025-04-16",
-          "value": 3452030.0
-        },
         {
           "date": "2025-04-23",
           "value": 3256734.0
@@ -646,16 +638,12 @@
         }
       ],
       "source": "https://fred.stlouisfed.org/series/WRESBAL",
-      "fetchedAt": "2026-10-18T19:24:33.547949+00:00",
+      "fetchedAt": "2026-10-19T01:09:35.030949+00:00",
       "failed": false,
       "frequency": "weekly"
     },
     "RRPONTSYD": {
       "rows": [
-        {
-          "date": "2025-04-16",
-          "value": 54.772
-        },
         {
           "date": "2025-04-17",
           "value": 58.6
@@ -2154,16 +2142,12 @@
         }
       ],
       "source": "https://fred.stlouisfed.org/series/RRPONTSYD",
-      "fetchedAt": "2026-10-18T19:24:33.547949+00:00",
+      "fetchedAt": "2026-10-19T01:09:35.030949+00:00",
       "failed": false,
       "frequency": "daily"
     },
     "TGA": {
       "rows": [
-        {
-          "date": "2025-04-16",
-          "value": 638783.0
-        },
         {
           "date": "2025-04-17",
           "value": 599993.0
@@ -3670,7 +3654,7 @@
         }
       ],
       "source": "https://fiscaldata.treasury.gov/datasets/daily-treasury-statement/operating-cash-balance",
-      "fetchedAt": "2026-10-18T19:24:38.147387+00:00",
+      "fetchedAt": "2026-10-19T01:09:39.830518+00:00",
       "failed": false,
       "frequency": "daily"
     }
