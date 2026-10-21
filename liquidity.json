@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "updated_at": "2026-10-21T10:04:33.313730+00:00",
+  "updated_at": "2026-10-21T15:55:46.006430+00:00",
   "series": {
     "WALCL": {
       "rows": [
@@ -3658,7 +3658,7 @@
         }
       ],
       "source": "https://fiscaldata.treasury.gov/datasets/daily-treasury-statement/operating-cash-balance",
-      "fetchedAt": "2026-10-21T10:04:33.313730+00:00",
+      "fetchedAt": "2026-10-21T15:55:46.006430+00:00",
       "failed": false,
       "frequency": "daily"
     }
