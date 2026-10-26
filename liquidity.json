@@ -1,13 +1,9 @@
 {
   "version": 2,
-  "updated_at": "2026-10-25T19:34:24.058186+00:00",
+  "updated_at": "2026-10-26T01:06:42.439690+00:00",
   "series": {
     "WALCL": {
       "rows": [
-        {
-          "date": "2025-04-23",
-          "value": 6726930.0
-        },
         {
           "date": "2025-04-30",
           "value": 6709277.0
@@ -322,16 +318,12 @@
         }
       ],
       "source": "https://fred.stlouisfed.org/series/WALCL",
-      "fetchedAt": "2026-10-25T19:34:18.711498+00:00",
+      "fetchedAt": "2026-10-26T01:06:37.730342+00:00",
       "failed": false,
       "frequency": "weekly"
     },
     "WRESBAL": {
       "rows": [
-        {
-          "date": "2025-04-23",
-          "value": 3256734.0
-        },
         {
           "date": "2025-04-30",
           "value": 3219214.0
@@ -646,16 +638,12 @@
         }
       ],
       "source": "https://fred.stlouisfed.org/series/WRESBAL",
-      "fetchedAt": "2026-10-25T19:34:18.711498+00:00",
+      "fetchedAt": "2026-10-26T01:06:37.730342+00:00",
       "failed": false,
       "frequency": "weekly"
     },
     "RRPONTSYD": {
       "rows": [
-        {
-          "date": "2025-04-23",
-          "value": 171.78
-        },
         {
           "date": "2025-04-24",
           "value": 130.004
@@ -2158,16 +2146,12 @@
         }
       ],
       "source": "https://fred.stlouisfed.org/series/RRPONTSYD",
-      "fetchedAt": "2026-10-25T19:34:18.711498+00:00",
+      "fetchedAt": "2026-10-26T01:06:37.730342+00:00",
       "failed": false,
       "frequency": "daily"
     },
     "TGA": {
       "rows": [
-        {
-          "date": "2025-04-23",
-          "value": 576159.0
-        },
         {
           "date": "2025-04-24",
           "value": 562759.0
@@ -3674,7 +3658,7 @@
         }
       ],
       "source": "https://fiscaldata.treasury.gov/datasets/daily-treasury-statement/operating-cash-balance",
-      "fetchedAt": "2026-10-25T19:34:24.058186+00:00",
+      "fetchedAt": "2026-10-26T01:06:42.439690+00:00",
       "failed": false,
       "frequency": "daily"
     }
