@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "updated_at": "2026-11-05T13:08:05.116167+00:00",
+  "updated_at": "2026-11-05T22:39:29.536970+00:00",
   "series": {
     "WALCL": {
       "rows": [
@@ -315,10 +315,14 @@
         {
           "date": "2026-10-28",
           "value": 6745635.0
+        },
+        {
+          "date": "2026-11-04",
+          "value": 6748145.0
         }
       ],
       "source": "https://fred.stlouisfed.org/series/WALCL",
-      "fetchedAt": "2026-11-05T13:07:58.550712+00:00",
+      "fetchedAt": "2026-11-05T22:39:23.883850+00:00",
       "failed": false,
       "frequency": "weekly"
     },
@@ -635,10 +639,14 @@
         {
           "date": "2026-10-28",
           "value": 2893770.0
+        },
+        {
+          "date": "2026-11-04",
+          "value": 2930088.0
         }
       ],
       "source": "https://fred.stlouisfed.org/series/WRESBAL",
-      "fetchedAt": "2026-11-05T13:07:58.550712+00:00",
+      "fetchedAt": "2026-11-05T22:39:23.883850+00:00",
       "failed": false,
       "frequency": "weekly"
     },
@@ -2147,10 +2155,14 @@
         {
           "date": "2026-11-04",
           "value": 0.225
+        },
+        {
+          "date": "2026-11-05",
+          "value": 0.125
         }
       ],
       "source": "https://fred.stlouisfed.org/series/RRPONTSYD",
-      "fetchedAt": "2026-11-05T13:07:58.550712+00:00",
+      "fetchedAt": "2026-11-05T22:39:23.883850+00:00",
       "failed": false,
       "frequency": "daily"
     },
@@ -3663,28 +3675,19 @@
         {
           "date": "2026-11-03",
           "value": 938208.0
+        },
+        {
+          "date": "2026-11-04",
+          "value": 936248.0
         }
       ],
       "source": "https://fiscaldata.treasury.gov/datasets/daily-treasury-statement/operating-cash-balance",
-      "fetchedAt": "2026-11-05T13:08:05.116167+00:00",
+      "fetchedAt": "2026-11-05T22:39:29.536970+00:00",
       "failed": false,
       "frequency": "daily"
     }
   },
   "rows": [
-    {
-      "date": "2025-09-10",
-      "value": 5908.977,
-      "walcl": 6605.962,
-      "tga": 667.585,
-      "rrp": 29.4,
-      "reserves": 3160774.0,
-      "sourceDates": {
-        "tga": "2025-09-10",
-        "rrp": "2025-09-10",
-        "reserves": "2025-09-10"
-      }
-    },
     {
       "date": "2025-09-17",
       "value": 5787.492,
@@ -4450,6 +4453,19 @@
         "tga": "2026-10-28",
         "rrp": "2026-10-28",
         "reserves": "2026-10-28"
+      }
+    },
+    {
+      "date": "2026-11-04",
+      "value": 5811.672,
+      "walcl": 6748.145,
+      "tga": 936.248,
+      "rrp": 0.225,
+      "reserves": 2930088.0,
+      "sourceDates": {
+        "tga": "2026-11-04",
+        "rrp": "2026-11-04",
+        "reserves": "2026-11-04"
       }
     }
   ],
