@@ -1,13 +1,9 @@
 {
   "version": 2,
-  "updated_at": "2026-11-08T21:05:51.657539+00:00",
+  "updated_at": "2026-11-09T02:37:21.361518+00:00",
   "series": {
     "WALCL": {
       "rows": [
-        {
-          "date": "2025-05-07",
-          "value": 6710889.0
-        },
         {
           "date": "2025-05-14",
           "value": 6713270.0
@@ -322,16 +318,12 @@
         }
       ],
       "source": "https://fred.stlouisfed.org/series/WALCL",
-      "fetchedAt": "2026-11-08T21:05:44.865652+00:00",
+      "fetchedAt": "2026-11-09T02:37:15.973414+00:00",
       "failed": false,
       "frequency": "weekly"
     },
     "WRESBAL": {
       "rows": [
-        {
-          "date": "2025-05-07",
-          "value": 3218636.0
-        },
         {
           "date": "2025-05-14",
           "value": 3235723.0
@@ -646,16 +638,12 @@
         }
       ],
       "source": "https://fred.stlouisfed.org/series/WRESBAL",
-      "fetchedAt": "2026-11-08T21:05:44.865652+00:00",
+      "fetchedAt": "2026-11-09T02:37:15.973414+00:00",
       "failed": false,
       "frequency": "weekly"
     },
     "RRPONTSYD": {
       "rows": [
-        {
-          "date": "2025-05-07",
-          "value": 154.859
-        },
         {
           "date": "2025-05-08",
           "value": 139.768
@@ -2158,16 +2146,12 @@
         }
       ],
       "source": "https://fred.stlouisfed.org/series/RRPONTSYD",
-      "fetchedAt": "2026-11-08T21:05:44.865652+00:00",
+      "fetchedAt": "2026-11-09T02:37:15.973414+00:00",
       "failed": false,
       "frequency": "daily"
     },
     "TGA": {
       "rows": [
-        {
-          "date": "2025-05-07",
-          "value": 595860.0
-        },
         {
           "date": "2025-05-08",
           "value": 576228.0
@@ -3674,7 +3658,7 @@
         }
       ],
       "source": "https://fiscaldata.treasury.gov/datasets/daily-treasury-statement/operating-cash-balance",
-      "fetchedAt": "2026-11-08T21:05:51.657539+00:00",
+      "fetchedAt": "2026-11-09T02:37:21.361518+00:00",
       "failed": false,
       "frequency": "daily"
     }
