@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "updated_at": "2026-11-10T13:25:20.022318+00:00",
+  "updated_at": "2026-11-10T22:20:07.651415+00:00",
   "series": {
     "WALCL": {
       "rows": [
@@ -318,7 +318,7 @@
         }
       ],
       "source": "https://fred.stlouisfed.org/series/WALCL",
-      "fetchedAt": "2026-11-10T13:25:15.043531+00:00",
+      "fetchedAt": "2026-11-10T22:20:01.666027+00:00",
       "failed": false,
       "frequency": "weekly"
     },
@@ -638,7 +638,7 @@
         }
       ],
       "source": "https://fred.stlouisfed.org/series/WRESBAL",
-      "fetchedAt": "2026-11-10T13:25:15.043531+00:00",
+      "fetchedAt": "2026-11-10T22:20:01.666027+00:00",
       "failed": false,
       "frequency": "weekly"
     },
@@ -2143,10 +2143,14 @@
         {
           "date": "2026-11-09",
           "value": 0.252
+        },
+        {
+          "date": "2026-11-10",
+          "value": 0.152
         }
       ],
       "source": "https://fred.stlouisfed.org/series/RRPONTSYD",
-      "fetchedAt": "2026-11-10T13:25:15.043531+00:00",
+      "fetchedAt": "2026-11-10T22:20:01.666027+00:00",
       "failed": false,
       "frequency": "daily"
     },
@@ -3655,10 +3659,14 @@
         {
           "date": "2026-11-06",
           "value": 910313.0
+        },
+        {
+          "date": "2026-11-09",
+          "value": 922633.0
         }
       ],
       "source": "https://fiscaldata.treasury.gov/datasets/daily-treasury-statement/operating-cash-balance",
-      "fetchedAt": "2026-11-10T13:25:20.022318+00:00",
+      "fetchedAt": "2026-11-10T22:20:07.651415+00:00",
       "failed": false,
       "frequency": "daily"
     }
