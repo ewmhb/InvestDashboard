@@ -3,10 +3,10 @@
     "BLS": {
       "checkedAt": "2026-09-10",
       "failed": true,
-      "attemptedAt": "2026-11-12T13:43:18.921959+00:00"
+      "attemptedAt": "2026-11-12T22:42:08.631073+00:00"
     },
     "FED": {
-      "checkedAt": "2026-11-12T13:43:18.921959+00:00",
+      "checkedAt": "2026-11-12T22:42:08.631073+00:00",
       "failed": false
     }
   },
@@ -425,7 +425,7 @@
       "importance": "높음"
     },
     {
-      "title": "FOMC 금리 결정 · 경제전망",
+      "title": "FOMC 금리 결정",
       "at": "2027-03-17T14:00:00-04:00",
       "source": "https://www.federalreserve.gov/monetarypolicy/fomccalendars.htm",
       "provider": "FED",
@@ -439,7 +439,7 @@
       "importance": "높음"
     },
     {
-      "title": "FOMC 금리 결정 · 경제전망",
+      "title": "FOMC 금리 결정",
       "at": "2027-06-09T14:00:00-04:00",
       "source": "https://www.federalreserve.gov/monetarypolicy/fomccalendars.htm",
       "provider": "FED",
@@ -453,7 +453,7 @@
       "importance": "높음"
     },
     {
-      "title": "FOMC 금리 결정 · 경제전망",
+      "title": "FOMC 금리 결정",
       "at": "2027-09-15T14:00:00-04:00",
       "source": "https://www.federalreserve.gov/monetarypolicy/fomccalendars.htm",
       "provider": "FED",
@@ -467,8 +467,8 @@
       "importance": "높음"
     },
     {
-      "title": "FOMC 금리 결정 · 경제전망",
-      "at": "2027-12-08T14:00:00-05:00",
+      "title": "FOMC 금리 결정",
+      "at": "2027-11-17T14:00:00-05:00",
       "source": "https://www.federalreserve.gov/monetarypolicy/fomccalendars.htm",
       "provider": "FED",
       "importance": "높음"
