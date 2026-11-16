@@ -1,13 +1,9 @@
 {
   "version": 2,
-  "updated_at": "2026-11-15T21:43:37.693587+00:00",
+  "updated_at": "2026-11-16T02:42:19.220895+00:00",
   "series": {
     "WALCL": {
       "rows": [
-        {
-          "date": "2025-05-14",
-          "value": 6713270.0
-        },
         {
           "date": "2025-05-21",
           "value": 6688726.0
@@ -322,16 +318,12 @@
         }
       ],
       "source": "https://fred.stlouisfed.org/series/WALCL",
-      "fetchedAt": "2026-11-15T21:43:33.835249+00:00",
+      "fetchedAt": "2026-11-16T02:42:11.593454+00:00",
       "failed": false,
       "frequency": "weekly"
     },
     "WRESBAL": {
       "rows": [
-        {
-          "date": "2025-05-14",
-          "value": 3235723.0
-        },
         {
           "date": "2025-05-21",
           "value": 3289469.0
@@ -646,16 +638,12 @@
         }
       ],
       "source": "https://fred.stlouisfed.org/series/WRESBAL",
-      "fetchedAt": "2026-11-15T21:43:33.835249+00:00",
+      "fetchedAt": "2026-11-16T02:42:11.593454+00:00",
       "failed": false,
       "frequency": "weekly"
     },
     "RRPONTSYD": {
       "rows": [
-        {
-          "date": "2025-05-14",
-          "value": 165.024
-        },
         {
           "date": "2025-05-15",
           "value": 109.436
@@ -2154,16 +2142,12 @@
         }
       ],
       "source": "https://fred.stlouisfed.org/series/RRPONTSYD",
-      "fetchedAt": "2026-11-15T21:43:33.835249+00:00",
+      "fetchedAt": "2026-11-16T02:42:11.593454+00:00",
       "failed": false,
       "frequency": "daily"
     },
     "TGA": {
       "rows": [
-        {
-          "date": "2025-05-14",
-          "value": 562433.0
-        },
         {
           "date": "2025-05-15",
           "value": 496649.0
@@ -3666,8 +3650,8 @@
         }
       ],
       "source": "https://fiscaldata.treasury.gov/datasets/daily-treasury-statement/operating-cash-balance",
-      "fetchedAt": "2026-11-15T12:41:32.525067+00:00",
-      "failed": true,
+      "fetchedAt": "2026-11-16T02:42:19.220895+00:00",
+      "failed": false,
       "frequency": "daily"
     }
   },
@@ -4453,5 +4437,5 @@
       }
     }
   ],
-  "failed": true
+  "failed": false
 }
