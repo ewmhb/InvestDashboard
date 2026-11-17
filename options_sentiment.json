@@ -1,11 +1,6 @@
 {
-  "updated_at": "2026-11-12",
+  "updated_at": "2026-11-16",
   "rows": [
-    {
-      "date": "2026-08-04",
-      "index_pc": 0.78,
-      "equity_pc": 0.46
-    },
     {
       "date": "2026-08-05",
       "index_pc": 0.94,
@@ -325,16 +320,21 @@
       "date": "2026-11-12",
       "index_pc": 0.97,
       "equity_pc": 0.72
+    },
+    {
+      "date": "2026-11-16",
+      "index_pc": 1.01,
+      "equity_pc": 0.73
     }
   ],
   "market_context": {
     "skew": {
-      "date": "2026-11-13",
-      "value": 147.14
+      "date": "2026-11-16",
+      "value": 146.33
     },
     "vix": {
-      "date": "2026-11-12",
-      "value": 18.7
+      "date": "2026-11-13",
+      "value": 19.3
     }
   }
 }
